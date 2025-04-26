@@ -7,12 +7,20 @@ public class Student {  //建立 class 類別
         this.age = age;
     }
 
-    public void introduction(){  //建立方法
+    public Student(){ //空的建構子
+
+    }
+
+    public void introduction(){  //建立方法1 (行為)
         System.out.println("我叫"+name+"，今年"+age+"歲");
     }
 
-    public int getAge(){ //建立方法
+    public int getAge(){ //建立方法2 (行為)
         return age;
+    }
+
+    public String getName(){
+        return name;
     }
     
 }
