@@ -1,11 +1,14 @@
 package com.example.demo.models;
 
 import java.math.BigDecimal;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -24,18 +27,22 @@ public class Product {
     private int status;
     @Column(name="is_deleted")
     private boolean is_deleted;
-    @Column(name="supplier_id")
-    private Integer supplierId; // Integer 才能為 null
+    // @Column(name="supplier_id")
+    // private Integer supplierId; // Integer 才能為 null
+    @ManyToOne
+    @JoinColumn(name="supplier_id")
+    private Supplier supplier;
 
     public Product(int id, String name, BigDecimal price, int quantity, int status, boolean is_deleted,
-            Integer supplierId) {
+            // Integer supplierId) {
+            Supplier supplier) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.quantity = quantity;
         this.status = status;
         this.is_deleted = is_deleted;
-        this.supplierId = supplierId;
+        this.supplier = supplier;
     }
     public Product(){
 
@@ -81,13 +88,13 @@ public class Product {
         this.status = status;
     }
 
-    public Integer getSupplierId() {
-        return supplierId;
-    }
+    // public Integer getSupplierId() {
+    //     return supplierId;
+    // }
 
-    public void setSupplierId(Integer supplierId) {
-        this.supplierId = supplierId;
-    }
+    // public void setSupplierId(Integer supplierId) {
+    //     this.supplierId = supplierId;
+    // }
 
     public boolean getIs_deleted() {
         return is_deleted;
@@ -95,6 +102,14 @@ public class Product {
 
     public void setIs_deleted(boolean is_deleted) {
         this.is_deleted = is_deleted;
+    }
+
+    public Supplier getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
     }
 
     

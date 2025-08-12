@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.models.Product;
+import com.example.demo.models.Supplier;
 import com.example.demo.repositories.ProductRepository;
+import com.example.demo.repositories.SupplierRepository;
 import com.example.demo.requests.CreateProductRequest;
 import com.example.demo.requests.UpdateProductRequest;
-import com.example.demo.responses.ProductResponse;
 import com.example.demo.responses.GetProductsResponse;
+import com.example.demo.responses.ProductResponse;
 
 
 @RestController
@@ -28,24 +30,25 @@ import com.example.demo.responses.GetProductsResponse;
 @CrossOrigin("*")
 public class ProductV1Controller {
     private final ProductRepository productRepository;
+    private final SupplierRepository supplierRepository; // for foreign Key of Supplier
 
     @Autowired
-    public ProductV1Controller(ProductRepository productRepository){
+    public ProductV1Controller(ProductRepository productRepository, SupplierRepository supplierRepository){
         this.productRepository = productRepository;
+        this.supplierRepository = supplierRepository;
     }
 
     //GetAllProducts
     @GetMapping
     public ResponseEntity<List<GetProductsResponse>> getAllProducts (){
         List<Product> products = productRepository.findAll();
-
         return ResponseEntity.ok(products.stream().map(GetProductsResponse::new).toList());
     }
+    
     //GetProductById
     @GetMapping("/{id}")
     public ResponseEntity<GetProductsResponse> getProductById(@PathVariable int id){
         Optional<Product> product = productRepository.findById(id);
-        System.out.print("★");
         if(product.isPresent()){
             GetProductsResponse response = new GetProductsResponse(product.get());
             return ResponseEntity.ok(response);
@@ -56,30 +59,33 @@ public class ProductV1Controller {
 
     @PostMapping
     public ResponseEntity<ProductResponse> createProduct(@RequestBody CreateProductRequest request){
-
+        Optional<Supplier> supplier = supplierRepository.findById(request.getSupplierId()); // for foreign key of Supplier
+        System.out.println(request.getSupplierId());
+        System.out.println();
         Product product = new Product();
         product.setName(request.getName());
         product.setPrice(request.getPrice());
         product.setQuantity(request.getQuantity());
         product.setStatus(request.getStatus());
         product.setIs_deleted(request.getIs_deleted());
-        product.setSupplierId(request.getSupplierId());
+        // product.setSupplierId(request.getSupplierId());
+        product.setSupplier(supplier.get()); // for foreign matter (supplier)
         
         Product productNew = productRepository.save(product);
 
-        ProductResponse response = new ProductResponse(productNew.getName(), productNew.getPrice());
+        ProductResponse response = new ProductResponse(productNew.getName(), productNew.getPrice(), productNew.getSupplier());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-        public ResponseEntity<ProductResponse> updateProductById(@PathVariable int id, @RequestBody UpdateProductRequest request){
-        
+    public ResponseEntity<ProductResponse> updateProductById(@PathVariable int id, @RequestBody UpdateProductRequest request){
         Optional<Product> product = productRepository.findById(id);
         if(product.isPresent()){
             Product updatedProduct = product.get(); 
             updatedProduct.setName(request.getName());
+
             Product savedProduct = productRepository.save(updatedProduct);
-            ProductResponse response = new ProductResponse(savedProduct.getName(), savedProduct.getPrice()); 
+            ProductResponse response = new ProductResponse(savedProduct.getName(), savedProduct.getPrice(), savedProduct.getSupplier()); 
             return ResponseEntity.ok(response);
         }else{
             return ResponseEntity.notFound().build();

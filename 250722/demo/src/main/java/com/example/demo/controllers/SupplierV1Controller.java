@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.models.Product;
 import com.example.demo.models.Supplier;
 import com.example.demo.repositories.SupplierRepository;
 import com.example.demo.requests.CreateSupplierRequest;
 import com.example.demo.requests.UpdateSupplierRequest;
 import com.example.demo.responses.GetSuppliersResponse;
+import com.example.demo.responses.ProductResponse;
 import com.example.demo.responses.SupplierResponse;
 
 @RestController
@@ -39,15 +41,24 @@ public class SupplierV1Controller {
     public ResponseEntity<List<GetSuppliersResponse>> getAllSuppliers (){
         List<Supplier> suppliers = supplierRepository.findAll();
 
-        return ResponseEntity.ok(suppliers.stream().map(GetSuppliersResponse::new).toList());
+        // return ResponseEntity.ok(suppliers.stream().map(GetSuppliersResponse::new).toList());
+        return ResponseEntity.ok(suppliers.stream().map(supplier -> {
+            GetSuppliersResponse response = new GetSuppliersResponse(supplier);
+            response.setProducts(supplier.getProducts().stream().map(ProductResponse::new).toList());
+            return response;
+        }).toList());
     }
     //GetProductById
     @GetMapping("/{id}")
     public ResponseEntity<GetSuppliersResponse> getSupplierById(@PathVariable int id){
         Optional<Supplier> supplier = supplierRepository.findById(id);
-        System.out.print("★");
         if(supplier.isPresent()){
             GetSuppliersResponse response = new GetSuppliersResponse(supplier.get());
+            // 接 ManyToOne 的資料
+            List<Product> productList = supplier.get().getProducts();
+
+            response.setProducts(productList.stream().map(ProductResponse::new).toList());
+
             return ResponseEntity.ok(response);
         }else{
             return ResponseEntity.notFound().build();

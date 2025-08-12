@@ -20,9 +20,9 @@ import com.example.demo.models.User;
 import com.example.demo.repositories.UserRepository;
 import com.example.demo.requests.CreateUserRequest;
 import com.example.demo.requests.UpdateUserRequest;
-import com.example.demo.responses.CreateUserResponse;
 import com.example.demo.responses.GetUsersResponse;
 import com.example.demo.responses.UpdateUserResponse;
+import com.example.demo.responses.UserResponse;
 
 
 // 不使用 jdbc 使用 orm
@@ -46,12 +46,12 @@ public class UserV2Controller {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GetUsersResponse> getUserById(@PathVariable int id){
+    public ResponseEntity<UserResponse> getUserById(@PathVariable int id){
         // User user = userRepository.getReferenceById(id);    
         // return ResponseEntity.ok(new GetUsersResponse(user));
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()){ // 如果這個 user 存在
-            GetUsersResponse response = new GetUsersResponse(user.get());
+            UserResponse response = new UserResponse(user.get());
             return ResponseEntity.ok(response);
         }else{
             return ResponseEntity.notFound().build();
@@ -69,7 +69,7 @@ public class UserV2Controller {
     // }
 
     @PostMapping
-    public ResponseEntity<CreateUserResponse> createUser(@RequestBody CreateUserRequest request){
+    public ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest request){
 
         User user = new User();
         user.setUsername(request.getUsername());
@@ -77,7 +77,7 @@ public class UserV2Controller {
         
         User userNew = userRepository.save(user);
 
-        CreateUserResponse response = new CreateUserResponse(userNew.getUsername());
+        UserResponse response = new UserResponse(userNew.getUsername(), userNew.getEmail());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 

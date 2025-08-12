@@ -1,5 +1,7 @@
 package com.example.demo.responses;
 
+import java.util.List;
+
 import com.example.demo.models.Supplier;
 
 public class GetSuppliersResponse {
@@ -10,6 +12,8 @@ public class GetSuppliersResponse {
     private String email;
     private boolean is_deleted;
     private Supplier supplier;
+
+    private List<ProductResponse> products;
 
     public GetSuppliersResponse() {
     }
@@ -79,5 +83,13 @@ public class GetSuppliersResponse {
 
     public void setIs_deleted(Boolean is_deleted) {
         this.is_deleted = is_deleted;
+    }
+
+    public List<ProductResponse> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<ProductResponse> products) {
+        this.products = products;
     }
 }

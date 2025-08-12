@@ -1,10 +1,13 @@
 package com.example.demo.models;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -23,6 +26,10 @@ public class Supplier {
     private String email;
     @Column(name="is_deleted")
     private boolean is_deleted;
+
+    @OneToMany(mappedBy="supplier")
+    private List<Product> products; //不用寫 Column
+
 
     public Supplier() {
     }
@@ -84,5 +91,12 @@ public class Supplier {
         this.is_deleted = is_deleted;
     }
     
+    public List<Product> getProducts(){
+        return products;
+    }
+
+    public void setProducts(List<Product> products){
+        this.products = products;
+    }
     
 }
