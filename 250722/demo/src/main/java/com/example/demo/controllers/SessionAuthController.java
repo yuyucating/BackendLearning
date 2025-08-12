@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.models.User;
 import com.example.demo.repositories.UserRepository;
 import com.example.demo.requests.LoginRequest;
+import com.example.demo.requests.RegisterUserRequest;
+import com.example.demo.responses.UserResponse;
 import com.example.demo.services.UserService;
 
 import jakarta.servlet.http.HttpSession;
@@ -63,5 +65,15 @@ public class SessionAuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User>
+    public ResponseEntity<UserResponse> register(@RequestBody RegisterUserRequest request, HttpSession session){
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPassword(request.getPassword());
+        user.setEmail(request.getEmail());
+
+        User userNew = userRepository.save(user);
+
+        UserResponse response = new UserResponse(userNew.getUsername(), userNew.getEmail());
+        return ResponseEntity.ok(response);
+    }
 }
