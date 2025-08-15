@@ -66,6 +66,12 @@ public class SessionAuthController {
 
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@RequestBody RegisterUserRequest request, HttpSession session){
+        // 判斷 username 是否存在
+        Optional<User> tempUser = userRepository.findByUsername(request.getUsername());
+        if(tempUser.isPresent()){
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());
@@ -73,6 +79,7 @@ public class SessionAuthController {
 
         User userNew = userRepository.save(user);
 
+        session.setAttribute("userId", user.getId());
         UserResponse response = new UserResponse(userNew.getUsername(), userNew.getEmail());
         return ResponseEntity.ok(response);
     }
