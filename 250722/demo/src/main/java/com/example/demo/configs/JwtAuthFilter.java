@@ -1,5 +1,6 @@
 package com.example.demo.configs;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +40,16 @@ public class JwtAuthFilter extends OncePerRequestFilter{
         
         //驗證 username 是否存在
         if(username!=null && SecurityContextHolder.getContext().getAuthentication()==null){
-            //存在!
+            //存在! 開始找 username
             Optional<User> user = userRepository.findByUsername(username);
             if(user.isPresent()){
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.get(), null);
+                // ★★★★★★ User 應該要有一個屬性為 "身份" ★★★★★★★
+                // 第三個參數應該取得"身份"，但目前沒有設定，所以先給他空值....
+                //空值方法1: 老師提供
+                // Collection<? extends GrantedAuthority> authorities = getUserAuthorities(user.get());
+                // UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.get(), null, authorities);
+                //空值方法2: GPT提供
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.get(), null, Collections.emptyList());
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
         }
