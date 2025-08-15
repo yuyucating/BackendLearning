@@ -13,7 +13,8 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 @Service
-class JwtService {
+public class JwtService {
+
 
     private long EXPIRATION_TIME; //預期過期時間(毫秒)
 
@@ -34,4 +35,21 @@ class JwtService {
         byte[] keyByte = Decoders.BASE64.decode("dGlueXNhbWVoYW5kc29tZXlvdW5nY2FsbHJlY29yZGdpZnRpbnZlbnRlZHdpdGhvdXQ=");
         return Keys.hmacShaKeyFor(keyByte); //
     }
+
+    // public String getUsernameFromToken(String token) {
+    //     return extractAllClaims(token).getSubject();
+    // }
+
+    // private Claims extractAllClaims(String token) {
+    //     return Jwts
+    //         .parserBuilder()
+    //         .setSigningKey(getKey())
+    //         .build()
+    //         .parseClaimsJws(token)
+    //         .getBody();
+    // }
+    public String getUsernameFromToken(String token){
+        return Jwts.parserBuilder().setSigningKey(getKey()).build().parseClaimsJws(token).getBody().getSubject();
+    }
+
 }
