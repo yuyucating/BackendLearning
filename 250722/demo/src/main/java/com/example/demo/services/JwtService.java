@@ -36,18 +36,6 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyByte); //
     }
 
-    // public String getUsernameFromToken(String token) {
-    //     return extractAllClaims(token).getSubject();
-    // }
-
-    // private Claims extractAllClaims(String token) {
-    //     return Jwts
-    //         .parserBuilder()
-    //         .setSigningKey(getKey())
-    //         .build()
-    //         .parseClaimsJws(token)
-    //         .getBody();
-    // }
     public String getUsernameFromToken(String token){
         return Jwts.parserBuilder().setSigningKey(getKey()).build().parseClaimsJws(token).getBody().getSubject();
     }

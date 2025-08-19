@@ -73,7 +73,7 @@ public class ProductV1Controller {
         
         Product productNew = productRepository.save(product);
 
-        ProductResponse response = new ProductResponse(productNew.getName(), productNew.getPrice(), productNew.getSupplier());
+        ProductResponse response = new ProductResponse(productNew.getName(), productNew.getPrice());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -85,7 +85,7 @@ public class ProductV1Controller {
             updatedProduct.setName(request.getName());
 
             Product savedProduct = productRepository.save(updatedProduct);
-            ProductResponse response = new ProductResponse(savedProduct.getName(), savedProduct.getPrice(), savedProduct.getSupplier()); 
+            ProductResponse response = new ProductResponse(savedProduct.getName(), savedProduct.getPrice()); 
             return ResponseEntity.ok(response);
         }else{
             return ResponseEntity.notFound().build();
