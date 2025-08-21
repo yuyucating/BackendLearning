@@ -77,7 +77,7 @@ public class UserV2Controller {
         
         User userNew = userRepository.save(user);
 
-        UserResponse response = new UserResponse(userNew.getUsername(), userNew.getEmail());
+        UserResponse response = new UserResponse(userNew.getUsername(), userNew.getEmail(), userNew.getRole());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 

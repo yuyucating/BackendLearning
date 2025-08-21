@@ -6,14 +6,16 @@ public class RegisterUserRequest {
     private String username;
     private String email;
     private String password;
+    private String role;
     private User user;
 
     public RegisterUserRequest() {
     }
-    public RegisterUserRequest(String username, String email, String password) {
+    public RegisterUserRequest(String username, String email, String password, String role) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
     public RegisterUserRequest(User user){
         this.user = user;
@@ -45,5 +47,11 @@ public class RegisterUserRequest {
     }
     public void setUser(User user) {
         this.user = user;
+    }
+    public String getRole() {
+        return role;
+    }
+    public void setRole(String role) {
+        this.role = role;
     }
 }

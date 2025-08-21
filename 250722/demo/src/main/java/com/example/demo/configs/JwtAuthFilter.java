@@ -54,7 +54,7 @@ public class JwtAuthFilter extends OncePerRequestFilter{
                 // 第三個參數應該取得"身份"，但目前沒有設定，所以先給他空值....
                 //空值方法1: 老師提供
                 // 若使用 SpringBoot Security 則必須包含授權邏輯: what can user do?
-                Collection<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_RULE")); 
+                Collection<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.get().getRole())); 
                 // ↑ 此 token 為 Spring Security 使用的 token (包含 user & authorities)
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.get(), null, authorities);
                 // 將使用者提出請求對應授權(token)且允許授權的結果塞給 SecurityContextHolder (springboot)

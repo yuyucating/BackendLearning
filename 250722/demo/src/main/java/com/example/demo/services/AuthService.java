@@ -3,6 +3,7 @@ package com.example.demo.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.models.User;
@@ -10,6 +11,7 @@ import com.example.demo.repositories.UserRepository;
 import com.example.demo.requests.LoginRequest;
 import com.example.demo.requests.RegisterUserRequest;
 import com.example.demo.responses.AuthResponse;
+import com.example.demo.responses.UserResponse;
 
 @Service
 public class AuthService {
@@ -17,20 +19,24 @@ public class AuthService {
     private UserRepository userRepository;
     @Autowired
     private JwtService jwtService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    public AuthResponse register(RegisterUserRequest request){
+    public UserResponse register(RegisterUserRequest request){
         // 建立 User
         User user = new User();
         user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
+        // user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setEmail(request.getEmail());
-        user.setRole("ROLE_USER");
+        user.setRole(request.getRole());
 
         User userNew = userRepository.save(user);
 
         //產出 token
-        String jwtToken = jwtService.generateToken(user);
-        return new AuthResponse(jwtToken);
+        // String jwtToken = jwtService.generateToken(user);
+
+        return new UserResponse(request.getUsername(), request.getEmail(), request.getRole());
     }
     public AuthResponse auth(LoginRequest request){
         // 找到對應 User
