@@ -6,6 +6,7 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -49,7 +50,7 @@ public class User {
     @Column(name="has_newsletter", nullable=false)
     private boolean hasNewsletter = true;
 
-    @OneToMany(mappedBy="user") //對應 UserSegment 裡面的 user 資料
+    @OneToMany(mappedBy="user", fetch=FetchType.LAZY) //對應 UserSegment 裡面的 user 資料
     private List<UserSegment> userSegments;
 
     @Column(name="last_login_time")
