@@ -27,5 +27,5 @@ public class Segment {
     private String name;
 
     @OneToMany(mappedBy="segment")
-    private List<UserSegment> userSegment;
+    private List<UserSegment> userSegments;
 }

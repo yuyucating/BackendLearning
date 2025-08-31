@@ -50,7 +50,7 @@ public class User {
     private boolean hasNewsletter = true;
 
     @OneToMany(mappedBy="user") //對應 UserSegment 裡面的 user 資料
-    private List<UserSegment> userSegment;
+    private List<UserSegment> userSegments;
 
     @Column(name="last_login_time")
     private LocalDateTime lastLoginTime;
