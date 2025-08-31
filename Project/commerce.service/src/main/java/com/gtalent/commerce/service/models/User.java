@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -50,7 +51,7 @@ public class User {
     @Column(name="has_newsletter", nullable=false)
     private boolean hasNewsletter = true;
 
-    @OneToMany(mappedBy="user", fetch=FetchType.LAZY) //對應 UserSegment 裡面的 user 資料
+    @OneToMany(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.LAZY) //對應 UserSegment 裡面的 user 資料
     private List<UserSegment> userSegments;
 
     @Column(name="last_login_time")
