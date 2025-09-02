@@ -3,6 +3,8 @@ package com.gtalent.commerce.service.responses;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.gtalent.commerce.service.models.User;
+
 public class GetUserListResponse {
     private String name;
     private LocalDateTime lastLoginTime;
@@ -24,6 +26,16 @@ public class GetUserListResponse {
         this.latestPurchase = latestPurchase;
         this.has_newletter = has_newletter;
         this.segments = segments;
+    }
+
+    public GetUserListResponse(User user) {
+        this.name = user.getFirstName() + " " + user.getLastName();
+        this.lastLoginTime = user.getLastLoginTime();
+        this.orders = 0; // TODO: 根據實際資料來源填
+        this.totalSpent = 0; // TODO: 同上
+        this.latestPurchase = null; // TODO: 同上
+        this.has_newletter = user.isHasNewsletter();
+        this.segments = null; //TODO!!!
     }
 
     public String getName() {

@@ -23,13 +23,13 @@ import com.gtalent.commerce.service.responses.GetUserListResponse;
 import com.gtalent.commerce.service.responses.GetUserResponse;
 
 @RestController
-@RequestMapping("v1/user")
+@RequestMapping("v1/users")
 @CrossOrigin("*")
 public class UserController {
     private final UserRepository userRepository;
 
     @Autowired
-    public UserV1Controller(UserRepository userRepository){
+    public UserController(UserRepository userRepository){
         this.userRepository = userRepository;
     }
 
@@ -44,6 +44,8 @@ public class UserController {
         user.setCity(request.getCity());
         user.setState(request.getState());
         user.setZipcode(request.getZipcode());
+        user.setPassword(request.getPassword());
+        user.setRole(request.getRole());
         user.setHasNewsletter(request.getHasNewsletter());
 
         User newUser = userRepository.save(user);
