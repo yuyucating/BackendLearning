@@ -21,16 +21,19 @@ import com.gtalent.commerce.service.requests.CreateUserRequest;
 import com.gtalent.commerce.service.requests.UpdateUserRequest;
 import com.gtalent.commerce.service.responses.GetUserListResponse;
 import com.gtalent.commerce.service.responses.GetUserResponse;
+import com.gtalent.commerce.service.services.UserService;
 
 @RestController
 @RequestMapping("v1/users")
 @CrossOrigin("*")
 public class UserController {
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @Autowired
-    public UserController(UserRepository userRepository){
+    public UserController(UserRepository userRepository, UserService userService){
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @PostMapping
@@ -59,7 +62,7 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<GetUserListResponse>> getAllUsers(){
-        List<User> users = userRepository.findAll(); //調整為篩出 is_deleted=false
+        List<User> users = userService.getAllUsers(); //調整為篩出 is_deleted=false
 
         return ResponseEntity.ok(users.stream().map(GetUserListResponse::new).toList());
     }
