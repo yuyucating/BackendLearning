@@ -6,6 +6,7 @@ import java.util.List;
 import com.gtalent.commerce.service.models.User;
 
 public class GetUserListResponse {
+    private int id;
     private String name;
     private LocalDateTime lastLoginTime;
     private int orders=0;
@@ -17,8 +18,9 @@ public class GetUserListResponse {
     public GetUserListResponse() {
     }
 
-    public GetUserListResponse(String firstName, String lastName, LocalDateTime lastLoginTime, int orders, float totalSpent,
+    public GetUserListResponse(int id, String firstName, String lastName, LocalDateTime lastLoginTime, int orders, float totalSpent,
             LocalDateTime latestPurchase, boolean has_newletter, List<String> segments) {
+        this.id = id;
         this.name = firstName+" "+lastName;
         this.lastLoginTime = lastLoginTime;
         this.orders = orders;
@@ -29,6 +31,7 @@ public class GetUserListResponse {
     }
 
     public GetUserListResponse(User user) {
+        this.id = user.getId();
         this.name = user.getFirstName() + " " + user.getLastName();
         this.lastLoginTime = user.getLastLoginTime();
         this.orders = 0; // TODO: 根據實際資料來源填
@@ -36,6 +39,14 @@ public class GetUserListResponse {
         this.latestPurchase = null; // TODO: 同上
         this.has_newletter = user.isHasNewsletter();
         this.segments = null; //TODO!!!
+    }
+
+    public int getId(){
+        return id;
+    }
+
+    public void setId(){
+        this.id = id;
     }
 
     public String getName() {

@@ -59,7 +59,7 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<GetUserListResponse>> getAllUsers(){
-        List<User> users = userRepository.findAll();
+        List<User> users = userRepository.findAll(); //調整為篩出 is_deleted=false
 
         return ResponseEntity.ok(users.stream().map(GetUserListResponse::new).toList());
     }
@@ -79,6 +79,7 @@ public class UserController {
             userToBeUpdated.setState(request.getState());
             userToBeUpdated.setZipcode(request.getZipcode());
             userToBeUpdated.setHasNewsletter(request.isHasNewsletter());
+            // userToBeUpdated.setUserSegments(request.getUserSegments());
 
             User savedUser = userRepository.save(userToBeUpdated);
             GetUserResponse response = new GetUserResponse(savedUser.getFirstName(), savedUser.getLastName(),
