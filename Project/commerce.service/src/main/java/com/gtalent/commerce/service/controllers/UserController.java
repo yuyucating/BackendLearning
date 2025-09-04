@@ -88,7 +88,11 @@ public class UserController {
         @RequestParam(defaultValue="0") int page,
         @RequestParam(defaultValue="10") int size,
         @RequestParam(defaultValue= "") String query,
-        @RequestParam(required=false) LocalDate date,
+        //選單操作
+        @Parameter(
+            description = "date",
+            schema = @Schema(allowableValues = {"Today", "This week", "Last week", "This month", "Last month", "Earlier"})
+        )@RequestParam(required=false) String date,
         @RequestParam(required=false) int orders,
         @RequestParam(required=false) boolean hasNewsLetter,
         //選單操作
@@ -98,7 +102,12 @@ public class UserController {
         )@RequestParam(required=false) String segment
     ){
         PageRequest pageRequest = PageRequest.of(page, size);
-        return ResponseEntity.ok(userService.getAllUsers(query, pageRequest, date, orders, hasNewsLetter, segment).map(GetUserListResponse::new));
+        Page<GetUserListResponse> results = userService.getAllUsers(query, pageRequest, date, orders, hasNewsLetter, segment).map(GetUserListResponse::new);
+        if(results==null){
+            return ResponseEntity.noContent().build();
+        }else{
+            return ResponseEntity.ok(results);
+        }
     }
 
     @PutMapping("/{id}")
