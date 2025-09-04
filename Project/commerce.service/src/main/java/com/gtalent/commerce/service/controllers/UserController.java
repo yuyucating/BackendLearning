@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gtalent.commerce.service.models.User;
@@ -21,7 +24,10 @@ import com.gtalent.commerce.service.requests.CreateUserRequest;
 import com.gtalent.commerce.service.requests.UpdateUserRequest;
 import com.gtalent.commerce.service.responses.GetUserListResponse;
 import com.gtalent.commerce.service.responses.GetUserResponse;
+import com.gtalent.commerce.service.services.UserSegmentService;
 import com.gtalent.commerce.service.services.UserService;
+
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("v1/users")
@@ -29,13 +35,17 @@ import com.gtalent.commerce.service.services.UserService;
 public class UserController {
     private final UserRepository userRepository;
     private final UserService userService;
+    private final UserSegmentService userSegmentService;
 
     @Autowired
-    public UserController(UserRepository userRepository, UserService userService){
+    public UserController(UserRepository userRepository, UserService userService, UserSegmentService userSegmentService){
         this.userRepository = userRepository;
         this.userService = userService;
+        this.userSegmentService = userSegmentService;
     }
 
+    @Operation(summary="Create user", description="Creates a new user. Required information is provided in the request body example below."+
+        "<ul><li><b>email</b>: must be unique.</li><li><b>birthday</b>: optional (nullable).</li><li><b>role</b>: must be started with 'ROLE_'</li><li><b>hasNewsLetter</b>: defauts to true.</li></ul>")
     @PostMapping
     public ResponseEntity<GetUserResponse> createUser(@RequestBody CreateUserRequest request){
         User user = new User();
@@ -60,36 +70,32 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary="Get all users", description="This API returns all users.")
     @GetMapping
     public ResponseEntity<List<GetUserListResponse>> getAllUsers(){
         List<User> users = userService.getAllUsers(); //調整為篩出 is_deleted=false
 
+        System.out.print(users.stream().map(GetUserListResponse::new).toList());
         return ResponseEntity.ok(users.stream().map(GetUserListResponse::new).toList());
+    }
+
+    @Operation(summary="Get all users pagination", description="This API returns all users with pagination. The number of users per page and the page number need to be set.")
+    @GetMapping("/page")
+    public ResponseEntity<Page<GetUserListResponse>> getAllUsersPage(
+        @RequestParam(defaultValue="0") int page,
+        @RequestParam(defaultValue="10") int size
+    ){
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return ResponseEntity.ok(userService.getAllUsers(pageRequest).map(GetUserListResponse::new));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<GetUserResponse> updateUser(@PathVariable int id, @RequestBody UpdateUserRequest request){
         // 為了先檢查資料是否存在!
-        Optional<User> user = userRepository.findById(id);
-        if(user.isPresent()){
-            User userToBeUpdated = user.get();
-            userToBeUpdated.setFirstName(request.getFirstName());
-            userToBeUpdated.setLastName(request.getLastName());
-            userToBeUpdated.setEmail(request.getEmail());
-            userToBeUpdated.setBirthday(request.getBirthday());
-            userToBeUpdated.setAddress(request.getAddress());
-            userToBeUpdated.setCity(request.getCity());
-            userToBeUpdated.setState(request.getState());
-            userToBeUpdated.setZipcode(request.getZipcode());
-            userToBeUpdated.setHasNewsletter(request.isHasNewsletter());
-            // userToBeUpdated.setUserSegments(request.getUserSegments());
+        GetUserResponse user = userService.updateUser(id, request);
 
-            User savedUser = userRepository.save(userToBeUpdated);
-            GetUserResponse response = new GetUserResponse(savedUser.getFirstName(), savedUser.getLastName(),
-                savedUser.getEmail(), savedUser.getBirthday(), savedUser.getAddress(), savedUser.getCity(),
-                savedUser.getState(), savedUser.getZipcode(), savedUser.isHasNewsletter(),
-                savedUser.getUserSegments(), savedUser.getLastLoginTime(), savedUser.isDeleted());
-            return ResponseEntity.ok(response);
+        if(user!=null){
+            return ResponseEntity.ok(user);
         }else{
             return ResponseEntity.notFound().build();
         }
@@ -106,6 +112,13 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/{id}/segments/{segmentId}")
+    public ResponseEntity<Void>assignUserSegment(@PathVariable int id, @PathVariable int segmentId){
+        userSegmentService.assignUserSegment(id, segmentId);
+        return ResponseEntity.ok().build();
+    }
+
 
 
 }

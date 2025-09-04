@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.gtalent.commerce.service.models.User;
+import com.gtalent.commerce.service.models.UserSegment;
 
 public class GetUserListResponse {
     private int id;
@@ -19,7 +20,7 @@ public class GetUserListResponse {
     }
 
     public GetUserListResponse(int id, String firstName, String lastName, LocalDateTime lastLoginTime, int orders, float totalSpent,
-            LocalDateTime latestPurchase, boolean has_newletter, List<String> segments) {
+            LocalDateTime latestPurchase, boolean has_newletter, List<UserSegment> segments) {
         this.id = id;
         this.name = firstName+" "+lastName;
         this.lastLoginTime = lastLoginTime;
@@ -27,7 +28,7 @@ public class GetUserListResponse {
         this.totalSpent = totalSpent;
         this.latestPurchase = latestPurchase;
         this.has_newletter = has_newletter;
-        this.segments = segments;
+        this.segments = segments.stream().map(segment->segment.getSegment().getName()).toList();
     }
 
     public GetUserListResponse(User user) {
@@ -38,14 +39,14 @@ public class GetUserListResponse {
         this.totalSpent = 0; // TODO: 同上
         this.latestPurchase = null; // TODO: 同上
         this.has_newletter = user.isHasNewsletter();
-        this.segments = null; //TODO!!!
+        this.segments = user.getUserSegments().stream().map(userSegment->userSegment.getSegment().getName()).toList(); //TODO!!!
     }
 
     public int getId(){
         return id;
     }
 
-    public void setId(){
+    public void setId(int id){
         this.id = id;
     }
 
