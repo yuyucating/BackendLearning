@@ -19,4 +19,6 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 
     List<User> findByLastLoginTimeBetween(LocalDate dateFrom, LocalDate dateTo);
 
+    List<User> findBy
+
 }
