@@ -1,5 +1,6 @@
 package com.gtalent.commerce.service.controllers;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +29,8 @@ import com.gtalent.commerce.service.services.UserSegmentService;
 import com.gtalent.commerce.service.services.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @RestController
 @RequestMapping("v1/users")
@@ -84,10 +87,18 @@ public class UserController {
     public ResponseEntity<Page<GetUserListResponse>> getAllUsersPage(
         @RequestParam(defaultValue="0") int page,
         @RequestParam(defaultValue="10") int size,
-        @RequestParam(defaultValue= "") String query
+        @RequestParam(defaultValue= "") String query,
+        @RequestParam(required=false) LocalDate date,
+        @RequestParam(required=false) int orders,
+        @RequestParam(required=false) boolean hasNewsLetter,
+        //選單操作
+        @Parameter(
+            description = "User segment",
+            schema = @Schema(allowableValues = {"Compulsive", "Collector", "Ordered Once", "Regular", "Returns", "Reviewer"})
+        )@RequestParam(required=false) String segment
     ){
         PageRequest pageRequest = PageRequest.of(page, size);
-        return ResponseEntity.ok(userService.getAllUsers(query, pageRequest).map(GetUserListResponse::new));
+        return ResponseEntity.ok(userService.getAllUsers(query, pageRequest, date, orders, hasNewsLetter, segment).map(GetUserListResponse::new));
     }
 
     @PutMapping("/{id}")
