@@ -5,20 +5,21 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.gtalent.commerce.service.models.Segment;
+import com.gtalent.commerce.service.models.User;
 
 public class GetSegmentUsersResponse {
     private String user_name;
-    private LocalDate user_lastSeen;
+    private LocalDateTime user_lastSeen;
     private int user_orders;
     private float user_totalSpent;
     private LocalDateTime user_latestPurchase;
     private boolean hasNewsLetter;
-    private List<Segment> segments;
+    private List<String> segments;
 
     public GetSegmentUsersResponse() {
     }
 
-    public GetSegmentUsersResponse(boolean hasNewsLetter, List<Segment> segments, LocalDate user_lastSeen, LocalDateTime user_latestPurchase, String user_name, int user_orders, float user_totalSpent) {
+    public GetSegmentUsersResponse(boolean hasNewsLetter, List<String> segments, LocalDateTime user_lastSeen, LocalDateTime user_latestPurchase, String user_name, int user_orders, float user_totalSpent) {
         this.hasNewsLetter = hasNewsLetter;
         this.segments = segments;
         this.user_lastSeen = user_lastSeen;
@@ -28,8 +29,14 @@ public class GetSegmentUsersResponse {
         this.user_totalSpent = user_totalSpent;
     }
 
-    public GetSegmentUsersResponse(Segment segment) {
-        //TODO
+    public GetSegmentUsersResponse(User user) {
+        this.hasNewsLetter = user.isHasNewsletter();
+        this.segments = user.getUserSegments().stream().map(userSegment->userSegment.getSegment().getName()).toList();
+        this.user_lastSeen = user.getLastLoginTime();
+        this.user_latestPurchase = null; // TODO: 根據實際資料來源填
+        this.user_name = user.getFirstName() + " " + user.getLastName();
+        this.user_orders = 0; // TODO: 根據實際資料來源填
+        this.user_totalSpent = 0; // TODO: 根據實際資料來源填
 
     }
 
@@ -41,11 +48,11 @@ public class GetSegmentUsersResponse {
         this.user_name = user_name;
     }
 
-    public LocalDate getUser_lastSeen() {
+    public LocalDateTime getUser_lastSeen() {
         return user_lastSeen;
     }
 
-    public void setUser_lastSeen(LocalDate user_lastSeen) {
+    public void setUser_lastSeen(LocalDateTime user_lastSeen) {
         this.user_lastSeen = user_lastSeen;
     }
 
@@ -81,13 +88,6 @@ public class GetSegmentUsersResponse {
         this.hasNewsLetter = hasNewsLetter;
     }
 
-    public List<Segment> getSegments() {
-        return segments;
-    }
-
-    public void setSegments(List<Segment> segments) {
-        this.segments = segments;
-    }
 
 
 }

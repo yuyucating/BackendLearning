@@ -35,10 +35,13 @@ public class UserService {
         }
     }
 
-    public Page<User> getAllUsers(PageRequest pageRequest){
-        Page<User> users = userRepository.findAll(pageRequest);
+    public Page<User> getAllUsers(String query, PageRequest pageRequest){
+        if(query!=null && !query.isEmpty()){
+            return userRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(query, query, pageRequest);
+        }else{
+            return userRepository.findAll(pageRequest);
+        }
 
-        return users;  
     }
 
     public GetUserResponse updateUser(int id, UpdateUserRequest request){

@@ -28,4 +28,5 @@ public class SegmentService {
             return new ArrayList<>();
         }
     }
+
 }

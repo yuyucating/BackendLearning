@@ -83,10 +83,11 @@ public class UserController {
     @GetMapping("/page")
     public ResponseEntity<Page<GetUserListResponse>> getAllUsersPage(
         @RequestParam(defaultValue="0") int page,
-        @RequestParam(defaultValue="10") int size
+        @RequestParam(defaultValue="10") int size,
+        @RequestParam(defaultValue= "") String query
     ){
         PageRequest pageRequest = PageRequest.of(page, size);
-        return ResponseEntity.ok(userService.getAllUsers(pageRequest).map(GetUserListResponse::new));
+        return ResponseEntity.ok(userService.getAllUsers(query, pageRequest).map(GetUserListResponse::new));
     }
 
     @PutMapping("/{id}")

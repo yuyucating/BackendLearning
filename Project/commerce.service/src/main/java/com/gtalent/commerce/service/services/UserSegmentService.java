@@ -1,5 +1,7 @@
 package com.gtalent.commerce.service.services;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +28,6 @@ public class UserSegmentService {
         this.userSegmentRepository = userSegmentRepository;
     }
 
-
-
     public void assignUserSegment(int id, int segmentId){
         Optional<Segment> segment = segmentRepository.findById(segmentId);
         Optional<User> user = userRepository.findById(id);
@@ -40,5 +40,14 @@ public class UserSegmentService {
             userSegmentRepository.save(userSegment);
         }
 
+    }
+
+    public List<User> getSegmentUsers(int id){
+        try{
+            List<User> users = userRepository.findByUserSegmentsSegmentId(id);
+            return users;
+        }catch(Exception e){
+            return new ArrayList<>();
+        }
     }
 }
