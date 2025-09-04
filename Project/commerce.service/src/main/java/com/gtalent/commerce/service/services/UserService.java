@@ -1,10 +1,14 @@
 package com.gtalent.commerce.service.services;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -28,20 +32,61 @@ public class UserService {
     public List<User> getAllUsers(){
         try{
             List<User> users = userRepository.findAll();
-
             return users;
         }catch(Exception e){
             return new ArrayList<>();
         }
     }
 
-    public Page<User> getAllUsers(String query, PageRequest pageRequest){
+    public Page<User> getAllUsers(String query, PageRequest pageRequest, String date, int orders, boolean hasNewsLetter, String segment){
+        Set<User> usersSet = new HashSet<>();
         if(query!=null && !query.isEmpty()){
-            return userRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(query, query, pageRequest);
-        }else{
-            return userRepository.findAll(pageRequest);
+            usersSet.addAll(userRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(query, query));
         }
-
+        if(date!=null){
+            LocalDate today = LocalDate.now();
+            LocalDate dateFrom = LocalDate.MIN;
+            LocalDate dateTo = LocalDate.MAX;
+            switch(date){
+                case "Today":
+                    dateFrom = today;
+                    dateTo = today;
+                    break;
+                case "This week":
+                    dateFrom = today.minusWeeks(1);
+                    dateTo = today;
+                    break;
+                case "Last week":
+                    dateFrom = today.minusWeeks(2);
+                    dateTo = today.minusWeeks(1);
+                    break;
+                case "This month":
+                    dateFrom = today.minusMonths(1);
+                    dateTo = today;
+                    break;
+                case "Last month":
+                    dateFrom = today.minusMonths(2);
+                    dateTo = today.minusMonths(1);
+                    break;
+                case "Earlier":
+                    dateFrom = LocalDate.MIN;
+                    dateTo = today.minusMonths(2);
+                    break;
+            }
+            usersSet.addAll(userRepository.findByLastLoginTimeBetween(dateFrom, dateTo));
+        }
+        if(orders!=null){
+            usersSet.addAll(userRepository.find);
+        }
+        
+        if (usersSet.isEmpty()){
+            return null;
+        }
+        else{
+            List<User> resultList = new ArrayList<>(usersSet);
+            Page<User> results = new PageImpl<>(resultList, pageRequest, resultList.size());
+            return results;
+        }  
     }
 
     public GetUserResponse updateUser(int id, UpdateUserRequest request){
