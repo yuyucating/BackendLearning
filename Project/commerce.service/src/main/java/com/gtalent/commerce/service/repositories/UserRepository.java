@@ -2,17 +2,21 @@ package com.gtalent.commerce.service.repositories;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.gtalent.commerce.service.models.Segment;
 import com.gtalent.commerce.service.models.User;
 
-public interface UserRepository extends JpaRepository<User, Integer>{
+public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecificationExecutor<User>{
     // SELECT * FROM users Where username=???
     // Optional<User> findByUsername(String username); 
     // 根據 segment 的 id 查 User
+
     List<User> findByUserSegmentsSegmentId(Integer segmentId);
 
     // 或者根據 segment 的名稱查 User

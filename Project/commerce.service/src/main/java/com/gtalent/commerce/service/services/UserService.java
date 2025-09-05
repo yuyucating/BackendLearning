@@ -15,12 +15,14 @@ import org.springframework.stereotype.Service;
 
 import com.gtalent.commerce.service.models.Segment;
 import com.gtalent.commerce.service.models.User;
+import com.gtalent.commerce.service.models.UserSegment;
 import com.gtalent.commerce.service.repositories.SegmentRepository;
 import com.gtalent.commerce.service.repositories.UserRepository;
 import com.gtalent.commerce.service.repositories.UserSegmentRepository;
 import com.gtalent.commerce.service.requests.UpdateUserRequest;
 import com.gtalent.commerce.service.responses.GetUserResponse;
 
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 
 
@@ -124,7 +126,7 @@ public class UserService {
         return userRepository.findAll(spec, pageRequest);
     }
 
-    private Specification<User> userSpecification(String queryName, Boolean hasNewsletter, Integer sementId){
+    private Specification<User> userSpecification(String queryName, Boolean hasNewsletter, Integer segmentId){
         return ((root, query, criteriaBuilder)->{
             List<Predicate> predicates = new ArrayList<>();
             if(queryName!=null&& !queryName.isEmpty()){
@@ -132,6 +134,13 @@ public class UserService {
                     criteriaBuilder.like(criteriaBuilder.lower(root.get("firstName")), "%"+queryName.toLowerCase()+"%"),
                     criteriaBuilder.like(criteriaBuilder.lower(root.get("lastName")), "%"+queryName.toLowerCase()+"%")
                     ));
+            }
+            if(hasNewsletter!=null){
+                predicates.add(criteriaBuilder.equal(root.get("hasNewletter"), hasNewsletter));
+            }
+            if(segmentId!=null){
+                Join<User, UserSegment> userUserSegmentJoin = root.join("userSegments");
+                predicates.add(criteriaBuilder.equal(userUserSegmentJoin.get("segment").get("id"), segmentId));
             }
 
             return criteriaBuilder.and(predicates.toArray(predicates.toArray(new Predicate[0])));
