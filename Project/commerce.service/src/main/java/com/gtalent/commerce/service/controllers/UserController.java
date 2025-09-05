@@ -86,6 +86,7 @@ public class UserController {
     public ResponseEntity<Page<GetUserListResponse>> getAllUsersPage(
         @RequestParam(defaultValue="0") int page,
         @RequestParam(defaultValue="10") int size,
+        @Parameter(description="Keyword for searching by firstName or lastName")
         @RequestParam(defaultValue= "") String query,
         //選單操作
         @Parameter(
@@ -120,6 +121,9 @@ public class UserController {
     ){
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<User> users = userService.getAllUsers2(query, hasNewsLetter, segmentId, pageRequest);
+        if(users==null || users.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok(users.map(GetUserListResponse::new));
     }
 
