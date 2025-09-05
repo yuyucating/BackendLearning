@@ -1,6 +1,5 @@
 package com.gtalent.commerce.service.controllers;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -102,12 +101,26 @@ public class UserController {
         )@RequestParam(required=false) String segment
     ){
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<GetUserListResponse> results = userService.getAllUsers(query, pageRequest, date, orders, hasNewsLetter, segment).map(GetUserListResponse::new);
-        if(results==null){
+        Page<User> results = userService.getAllUsers(query, pageRequest, date, orders, hasNewsLetter, segment);
+        if(results==null || results.isEmpty()){
             return ResponseEntity.noContent().build();
         }else{
-            return ResponseEntity.ok(results);
+            Page<GetUserListResponse> response = results.map(GetUserListResponse::new); 
+            return ResponseEntity.ok(response);
         }
+    }
+
+    @GetMapping("/page2")
+    public ResponseEntity<Page<GetUserListResponse>> getAllUsersPage2(
+        @RequestParam(defaultValue="0") int page,
+        @RequestParam(defaultValue="10") int size,
+        @RequestParam(defaultValue= "") String query,
+        @RequestParam(required=false) Boolean hasNewsLetter,
+        @RequestParam(required=false) Integer segmentId
+    ){
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<User> users = userService.getAllUsers2(query, hasNewsLetter, segmentId, pageRequest);
+        return ResponseEntity.ok(users.map(GetUserListResponse::new));
     }
 
     @PutMapping("/{id}")

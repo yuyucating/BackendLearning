@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.gtalent.commerce.service.models.Segment;
@@ -19,6 +20,8 @@ import com.gtalent.commerce.service.repositories.UserRepository;
 import com.gtalent.commerce.service.repositories.UserSegmentRepository;
 import com.gtalent.commerce.service.requests.UpdateUserRequest;
 import com.gtalent.commerce.service.responses.GetUserResponse;
+
+import jakarta.persistence.criteria.Predicate;
 
 
 // 邏輯判斷在這裡
@@ -47,10 +50,11 @@ public class UserService {
 
     public Page<User> getAllUsers(String query, PageRequest pageRequest, String date, Integer orders, Boolean hasNewsLetter, String segment){
         Set<User> usersSet = new HashSet<>();
+        usersSet.addAll(userRepository.findAll());
         if(query!=null && !query.isEmpty()){
-            usersSet.addAll(userRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(query, query));
+            usersSet.retainAll(userRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(query, query));
         }
-        if(date!=null){
+        if(date!=null && !date.isEmpty()){
             LocalDate today = LocalDate.now();
             LocalDate dateFrom = LocalDate.MIN;
             LocalDate dateTo = LocalDate.MAX;
@@ -80,16 +84,16 @@ public class UserService {
                     dateTo = today.minusMonths(2);
                     break;
             }
-            usersSet.addAll(userRepository.findByLastLoginTimeBetween(dateFrom, dateTo));
+            usersSet.retainAll(userRepository.findByLastLoginTimeBetween(dateFrom, dateTo));
         }
         if(orders!=null){
             if(orders==0){
-                usersSet.addAll(userRepository.findByOrders(orders));
+                usersSet.retainAll(userRepository.findByOrders(orders));
             }else{
-                usersSet.addAll(userRepository.findByOrdersGreaterThan(orders));
+                usersSet.retainAll(userRepository.findByOrdersGreaterThan(orders));
             }
         }if(hasNewsLetter!=null){
-            usersSet.addAll(userRepository.findByHasNewsletter(hasNewsLetter));
+            usersSet.retainAll(userRepository.findByHasNewsletter(hasNewsLetter));
         }if(segment!=null){
             // List<Segment> segments = segmentRepository.findByName(segment);
             // int segmentId = segments.get(0).getId();
@@ -98,7 +102,7 @@ public class UserService {
 
             if(!segmentList.isEmpty()){
                 Segment targetSegment = segmentList.get(0); // 取第一個
-                usersSet.addAll(userRepository.findByUserSegment(targetSegment));
+                usersSet.retainAll(userRepository.findByUserSegment(targetSegment));
             }           
         }
         
@@ -110,6 +114,28 @@ public class UserService {
             Page<User> results = new PageImpl<>(resultList, pageRequest, resultList.size());
             return results;
         }  
+    }
+
+    
+
+    public Page<User> getAllUsers2(String query, Boolean hasNewletter, Integer segmentId, PageRequest pageRequest){
+        Specification<User> spec = userSpecification(query, hasNewletter, segmentId);
+        
+        return userRepository.findAll(spec, pageRequest);
+    }
+
+    private Specification<User> userSpecification(String queryName, Boolean hasNewsletter, Integer sementId){
+        return ((root, query, criteriaBuilder)->{
+            List<Predicate> predicates = new ArrayList<>();
+            if(queryName!=null&& !queryName.isEmpty()){
+                predicates.add(criteriaBuilder.or(
+                    criteriaBuilder.like(criteriaBuilder.lower(root.get("firstName")), "%"+queryName.toLowerCase()+"%"),
+                    criteriaBuilder.like(criteriaBuilder.lower(root.get("lastName")), "%"+queryName.toLowerCase()+"%")
+                    ));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(predicates.toArray(new Predicate[0])));
+        });
     }
 
     public GetUserResponse updateUser(int id, UpdateUserRequest request){
