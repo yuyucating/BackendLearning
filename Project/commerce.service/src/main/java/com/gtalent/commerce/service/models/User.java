@@ -58,5 +58,8 @@ public class User {
     private LocalDateTime lastLoginTime;
     @Column(name="is_deleted", nullable=false)
     private boolean isDeleted = false;
+
+    @OneToMany(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.LAZY) //對應 UserSegment 裡面的 user 資料
+    private List<Order> orders;
     
 }

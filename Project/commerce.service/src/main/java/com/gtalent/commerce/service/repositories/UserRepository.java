@@ -3,7 +3,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import com.gtalent.commerce.service.models.Segment;
 import com.gtalent.commerce.service.models.User;
 
 public interface UserRepository extends JpaRepository<User, Integer>{
@@ -19,6 +22,16 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 
     List<User> findByLastLoginTimeBetween(LocalDate dateFrom, LocalDate dateTo);
 
-    List<User> findBy
+    @Query("SELECT u FROM User u WHERE SIZE(u.orders) > :count")
+    List<User> findByOrdersGreaterThan(@Param("count") int orders);
+
+    @Query("SELECT u FROM User u WHERE SIZE(u.orders) = :count")
+    List<User> findByOrders(@Param("count") int orders);
+
+    List<User> findByHasNewsletter(boolean hasNewsletter);
+
+    // List<User> findBySegmentsSegmentName(String segmentName);
+    @Query("SELECT u FROM User u JOIN u.userSegments us WHERE us.segment = :segment")
+    List<User> findByUserSegment(@Param("segment") Segment segment);
 
 }

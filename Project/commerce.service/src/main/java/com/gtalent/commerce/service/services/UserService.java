@@ -12,8 +12,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.gtalent.commerce.service.models.Segment;
 import com.gtalent.commerce.service.models.User;
+import com.gtalent.commerce.service.repositories.SegmentRepository;
 import com.gtalent.commerce.service.repositories.UserRepository;
+import com.gtalent.commerce.service.repositories.UserSegmentRepository;
 import com.gtalent.commerce.service.requests.UpdateUserRequest;
 import com.gtalent.commerce.service.responses.GetUserResponse;
 
@@ -23,10 +26,14 @@ import com.gtalent.commerce.service.responses.GetUserResponse;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final SegmentRepository segmentRepository;
+    private final UserSegmentRepository userSegmentRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository){
+    public UserService(UserRepository userRepository, SegmentRepository segmentRepository, UserSegmentRepository userSegmentRepository){
         this.userRepository = userRepository;
+        this.segmentRepository = segmentRepository;
+        this.userSegmentRepository = userSegmentRepository;
     }
 
     public List<User> getAllUsers(){
@@ -38,7 +45,7 @@ public class UserService {
         }
     }
 
-    public Page<User> getAllUsers(String query, PageRequest pageRequest, String date, int orders, boolean hasNewsLetter, String segment){
+    public Page<User> getAllUsers(String query, PageRequest pageRequest, String date, Integer orders, Boolean hasNewsLetter, String segment){
         Set<User> usersSet = new HashSet<>();
         if(query!=null && !query.isEmpty()){
             usersSet.addAll(userRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(query, query));
@@ -76,7 +83,23 @@ public class UserService {
             usersSet.addAll(userRepository.findByLastLoginTimeBetween(dateFrom, dateTo));
         }
         if(orders!=null){
-            usersSet.addAll(userRepository.find);
+            if(orders==0){
+                usersSet.addAll(userRepository.findByOrders(orders));
+            }else{
+                usersSet.addAll(userRepository.findByOrdersGreaterThan(orders));
+            }
+        }if(hasNewsLetter!=null){
+            usersSet.addAll(userRepository.findByHasNewsletter(hasNewsLetter));
+        }if(segment!=null){
+            // List<Segment> segments = segmentRepository.findByName(segment);
+            // int segmentId = segments.get(0).getId();
+            List<Segment> segmentList = segmentRepository.findByName(segment);
+            // List<UserSegment> userSegments = userSegmentRepository.findBySegment(segmentObject.get(0));
+
+            if(!segmentList.isEmpty()){
+                Segment targetSegment = segmentList.get(0); // 取第一個
+                usersSet.addAll(userRepository.findByUserSegment(targetSegment));
+            }           
         }
         
         if (usersSet.isEmpty()){

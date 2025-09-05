@@ -12,7 +12,7 @@ import com.gtalent.commerce.service.models.User;
 import com.gtalent.commerce.service.models.UserSegment;
 import com.gtalent.commerce.service.repositories.SegmentRepository;
 import com.gtalent.commerce.service.repositories.UserRepository;
-import com.gtalent.commerce.service.responses.UserSegmentRepository;
+import com.gtalent.commerce.service.repositories.UserSegmentRepository;
 
 @Service
 public class UserSegmentService {

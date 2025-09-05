@@ -93,8 +93,8 @@ public class UserController {
             description = "date",
             schema = @Schema(allowableValues = {"Today", "This week", "Last week", "This month", "Last month", "Earlier"})
         )@RequestParam(required=false) String date,
-        @RequestParam(required=false) int orders,
-        @RequestParam(required=false) boolean hasNewsLetter,
+        @RequestParam(required=false) Integer orders,
+        @RequestParam(required=false) Boolean hasNewsLetter,
         //選單操作
         @Parameter(
             description = "User segment",
@@ -126,7 +126,7 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable int id){
         Optional<User> user = userRepository.findById(id);
         if(user.isPresent()){
-            user.get().setDeleted(true);
+            user.get().setDeleted(true);;
             userRepository.save(user.get());
             return ResponseEntity.ok().build();
         }else{
