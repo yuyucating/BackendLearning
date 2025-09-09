@@ -1,9 +1,8 @@
 package com.gtalent.commerce.service.repositories;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -17,6 +16,8 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
     // Optional<User> findByUsername(String username); 
     // 根據 segment 的 id 查 User
 
+    List<User> findByIsDeleted(Boolean isDeleted);
+    Optional<User> findByEmail(String email);
     List<User> findByUserSegmentsSegmentId(Integer segmentId);
 
     // 或者根據 segment 的名稱查 User

@@ -19,6 +19,7 @@ import com.gtalent.commerce.service.models.UserSegment;
 import com.gtalent.commerce.service.repositories.SegmentRepository;
 import com.gtalent.commerce.service.repositories.UserRepository;
 import com.gtalent.commerce.service.repositories.UserSegmentRepository;
+import com.gtalent.commerce.service.requests.CreateUserRequest;
 import com.gtalent.commerce.service.requests.UpdateUserRequest;
 import com.gtalent.commerce.service.responses.GetUserResponse;
 
@@ -41,9 +42,33 @@ public class UserService {
         this.userSegmentRepository = userSegmentRepository;
     }
 
+    public User createUser(CreateUserRequest request){
+        User user = new User();
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        Optional<User> userWithEmail = userRepository.findByEmail(request.getEmail());
+        if(userWithEmail.isPresent()){
+            System.out.println("Email existed.");
+            return null;
+        }else{
+            user.setEmail(request.getEmail());
+        }
+        user.setBirthday(request.getBirthday());
+        user.setAddress(request.getAddress());
+        user.setCity(request.getCity());
+        user.setState(request.getState());
+        user.setZipcode(request.getZipcode());
+        user.setPassword(request.getPassword());
+        user.setRole(request.getRole());
+        user.setHasNewsletter(request.getHasNewsletter());
+
+        User newUser = userRepository.save(user);
+        return newUser;
+    }
+
     public List<User> getAllUsers(){
         try{
-            List<User> users = userRepository.findAll();
+            List<User> users = userRepository.findByIsDeleted(false);
             return users;
         }catch(Exception e){
             return new ArrayList<>();
@@ -127,6 +152,8 @@ public class UserService {
     }
 
     private Specification<User> userSpecification(String queryName, Boolean hasNewsletter, Integer segmentId){
+        // root: user物件 (users table)
+
         return ((root, query, criteriaBuilder)->{
             List<Predicate> predicates = new ArrayList<>();
             if(queryName!=null&& !queryName.isEmpty()){
@@ -143,7 +170,8 @@ public class UserService {
                 predicates.add(criteriaBuilder.equal(userUserSegmentJoin.get("segment").get("id"), segmentId));
             }
 
-            return criteriaBuilder.and(predicates.toArray(predicates.toArray(new Predicate[0])));
+            Predicate[] predicateArray = predicates.toArray(new Predicate[0]);
+            return criteriaBuilder.and(predicateArray);
         });
     }
 
@@ -179,6 +207,17 @@ public class UserService {
             return response;
         }else{
             return null;
+        }
+    }
+
+    public boolean deleteUser(int id){
+        Optional<User> user = userRepository.findById(id);
+        if(user.isPresent()){
+            user.get().setDeleted(true);
+            userRepository.save(user.get());
+            return true;
+        } else{
+            return false;
         }
     }
 

@@ -1,7 +1,6 @@
 package com.gtalent.commerce.service.controllers;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -50,29 +49,21 @@ public class UserController {
         "<ul><li><b>email</b>: must be unique.</li><li><b>birthday</b>: optional (nullable).</li><li><b>role</b>: must be started with 'ROLE_'</li><li><b>hasNewsLetter</b>: defauts to true.</li></ul>")
     @PostMapping
     public ResponseEntity<GetUserResponse> createUser(@RequestBody CreateUserRequest request){
-        User user = new User();
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setEmail(request.getEmail());
-        user.setBirthday(request.getBirthday());
-        user.setAddress(request.getAddress());
-        user.setCity(request.getCity());
-        user.setState(request.getState());
-        user.setZipcode(request.getZipcode());
-        user.setPassword(request.getPassword());
-        user.setRole(request.getRole());
-        user.setHasNewsletter(request.getHasNewsletter());
+        User user = userService.createUser(request);
 
-        User newUser = userRepository.save(user);
-
-        GetUserResponse response = new GetUserResponse(newUser.getFirstName(), newUser.getLastName(),
-            newUser.getEmail(), newUser.getBirthday(), newUser.getAddress(), newUser.getCity(),
-            newUser.getState(), newUser.getZipcode(), newUser.isHasNewsletter(),
-            newUser.getUserSegments(), newUser.getLastLoginTime(), newUser.isDeleted());
-        return ResponseEntity.ok(response);
+        if(user!=null){
+            GetUserResponse response = new GetUserResponse(user.getFirstName(), user.getLastName(),
+                user.getEmail(), user.getBirthday(), user.getAddress(), user.getCity(),
+                user.getState(), user.getZipcode(), user.isHasNewsletter(),
+                user.getUserSegments(), user.getLastLoginTime(), user.isDeleted());
+            return ResponseEntity.ok(response);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
+        
     }
 
-    @Operation(summary="Get all users", description="This API returns all users.")
+    @Operation(summary="Get all undeleted users", description="This API returns all undeleted users.")
     @GetMapping
     public ResponseEntity<List<GetUserListResponse>> getAllUsers(){
         List<User> users = userService.getAllUsers(); //調整為篩出 is_deleted=false
@@ -141,16 +132,16 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable int id){
-        Optional<User> user = userRepository.findById(id);
-        if(user.isPresent()){
-            user.get().setDeleted(true);;
-            userRepository.save(user.get());
+        boolean check = userService.deleteUser(id);
+        if(check){
             return ResponseEntity.ok().build();
         }else{
             return ResponseEntity.notFound().build();
         }
     }
 
+    @Operation(summary="Assign UserSegment with user_id & segment_id",
+    description="<b>Segment:</b><ol><li>Compulsive</li><li>Collector</li><li>Ordered once</li><li>Regular</li><li>Return</li><li>Reviewer</li></ol>")
     @GetMapping("/{id}/segments/{segmentId}")
     public ResponseEntity<Void>assignUserSegment(@PathVariable int id, @PathVariable int segmentId){
         userSegmentService.assignUserSegment(id, segmentId);

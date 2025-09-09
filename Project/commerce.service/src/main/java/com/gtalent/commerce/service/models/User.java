@@ -61,5 +61,8 @@ public class User {
 
     @OneToMany(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.LAZY) //對應 UserSegment 裡面的 user 資料
     private List<Order> orders;
+
+    @OneToMany(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    private List<Review> review;
     
 }
