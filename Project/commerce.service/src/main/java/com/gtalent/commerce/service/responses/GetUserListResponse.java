@@ -39,7 +39,7 @@ public class GetUserListResponse {
         this.totalSpent = 0; // TODO: 同上
         this.latestPurchase = null; // TODO: 同上
         this.has_newletter = user.isHasNewsletter();
-        this.segments = user.getUserSegments().stream().map(userSegment->userSegment.getSegment().getName()).toList(); //TODO!!!
+        this.segments = user.getUserSegments().stream().map(userSegment->userSegment.getSegment().getName()).toList();
     }
 
     public int getId(){

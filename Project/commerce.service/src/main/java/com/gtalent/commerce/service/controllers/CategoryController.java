@@ -42,6 +42,8 @@ public class CategoryController {
         return ResponseEntity.ok(categories.stream().map(GetCategoryResponse::new).toList());
     }
 
+    //TODO: getcategoryproducts
+
     @PutMapping("/{id}")
     public ResponseEntity<GetCategoryProductsResponse> updateCategory(@PathVariable int id, @RequestBody UpdateCategoryRequest request){
         // 為了先檢查資料是否存在!
@@ -63,6 +65,8 @@ public class CategoryController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    
 
     
 }

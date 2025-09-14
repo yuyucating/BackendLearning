@@ -3,9 +3,13 @@ package com.gtalent.commerce.service.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,4 +67,40 @@ public class ProductController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/page2")
+    public ResponseEntity<Page<GetProductsResponse>> getAllProductPage2(
+        @RequestParam(defaultValue="0") int page,
+        @RequestParam(defaultValue="10") int size,
+        @RequestParam(defaultValue= "") String query,
+        @RequestParam(required=false) Integer stockFrom,
+        @RequestParam(required=false) Integer stockTo,
+        @Parameter(
+            description="categories",
+            schema=@Schema(allowableValues = {"Animal", "Beard", "Business", "Cars", "City", "Flowers", "Food", "Nature", "People", "Sports", "Tech", "Travel", "Water"})
+        )
+        @RequestParam(required=false) String category
+    ){
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Product> products = productService.getAllProduct2(query, stockFrom, stockTo, category, pageRequest);
+        if(products==null || products.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(products.map(GetProductsResponse::new));
+    }
+
+    // Update Product
+
+    // show product information (including reviews)
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable int id){
+        boolean check = productService.deleteProduct(id);
+        if(check){
+            return ResponseEntity.ok().build();
+        }else{
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
 }

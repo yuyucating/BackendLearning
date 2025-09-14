@@ -2,6 +2,9 @@ package com.gtalent.commerce.service.models;
 
 import java.time.LocalDate;
 
+import com.gtalent.commerce.service.enums.Rating;
+import com.gtalent.commerce.service.enums.ReviewStatus;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,7 +21,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="users")
+@Table(name="reviews")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

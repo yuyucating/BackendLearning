@@ -1,4 +1,4 @@
-package com.gtalent.commerce.service.models;
+package com.gtalent.commerce.service.enums;
 
 public enum ReviewStatus {
     Pending("Pending"), Accepted("Accepted"), Rejected("Rejected");
