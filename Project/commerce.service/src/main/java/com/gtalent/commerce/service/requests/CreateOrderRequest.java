@@ -22,8 +22,10 @@ public class CreateOrderRequest {
         this.userId = order.getUser().getId();
 
         Map<Integer, Integer> productQuantity = new HashMap<>();
-        for(OrderProduct i:order.getOrderProducts())
+        for(OrderProduct i:order.getOrderProducts()){
             productQuantity.put(i.getProduct().getId(), i.getQty());
+        }
+        this.productQuantity = productQuantity;
     }
 
     public int getUserId() {

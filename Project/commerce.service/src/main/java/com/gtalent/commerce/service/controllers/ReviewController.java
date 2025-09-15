@@ -1,9 +1,6 @@
 package com.gtalent.commerce.service.controllers;
 
 import java.util.List;
-import java.util.Optional;
-
-import javax.swing.text.html.Option;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,14 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gtalent.commerce.service.enums.ReviewStatus;
 import com.gtalent.commerce.service.models.Review;
-import com.gtalent.commerce.service.models.User;
-import com.gtalent.commerce.service.repositories.ReviewRepository;
 import com.gtalent.commerce.service.repositories.UserRepository;
 import com.gtalent.commerce.service.requests.CreateReviewRequest;
 import com.gtalent.commerce.service.requests.UpdateReviewStatusRequest;
-import com.gtalent.commerce.service.responses.GetUserListResponse;
 import com.gtalent.commerce.service.responses.ReviewsResponse;
 import com.gtalent.commerce.service.services.ReviewService;
 

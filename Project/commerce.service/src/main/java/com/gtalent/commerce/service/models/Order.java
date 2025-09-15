@@ -2,6 +2,7 @@ package com.gtalent.commerce.service.models;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -18,12 +19,14 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name="orders")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"totals", "orderProducts", "user"})
 public class Order {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -41,11 +44,10 @@ public class Order {
     @Column(name="is_returned", nullable=false)
     private boolean isReturned = false;
     @Column(name="delivery_fee", nullable=false)
-    private BigDecimal deliveryFee;
+    private BigDecimal deliveryFee = BigDecimal.ZERO;
     @Column(name="tax", nullable=false)
-    private BigDecimal tax;
+    private BigDecimal tax = BigDecimal.ZERO;
 
     @OneToMany(mappedBy="order", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
-    private List<OrderProduct> orderProducts;
-
+    private List<OrderProduct> orderProducts = new ArrayList<>();
 }

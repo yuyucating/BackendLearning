@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gtalent.commerce.service.models.User;
-import com.gtalent.commerce.service.repositories.UserRepository;
 import com.gtalent.commerce.service.requests.CreateUserRequest;
 import com.gtalent.commerce.service.requests.UpdateUserRequest;
 import com.gtalent.commerce.service.responses.GetUserListResponse;
@@ -34,13 +33,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @RequestMapping("v1/users")
 @CrossOrigin("*")
 public class UserController {
-    private final UserRepository userRepository;
     private final UserService userService;
     private final UserSegmentService userSegmentService;
 
     @Autowired
-    public UserController(UserRepository userRepository, UserService userService, UserSegmentService userSegmentService){
-        this.userRepository = userRepository;
+    public UserController(UserService userService, UserSegmentService userSegmentService){
         this.userService = userService;
         this.userSegmentService = userSegmentService;
     }
