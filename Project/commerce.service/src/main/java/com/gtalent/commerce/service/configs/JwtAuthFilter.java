@@ -10,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.gtalent.commerce.service.models.User;
@@ -21,6 +22,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+@Component
 public class JwtAuthFilter extends OncePerRequestFilter{
     //過濾請求/賦予權限
     @Autowired
@@ -41,7 +43,10 @@ public class JwtAuthFilter extends OncePerRequestFilter{
         // 若順利取得且格式正確
         String jwtToken = authHeader.substring(7); // 取得第7各字元開始的資料(去掉"Bearer")
         String email = jwtService.getEmailFromToken(jwtToken);
-        
+
+        System.out.println("★★JWT token: " + jwtToken);
+        System.out.println("★★Email from token: " + email);
+
         //驗證 username 是否存在
         if(email!=null && SecurityContextHolder.getContext().getAuthentication()==null){
             //存在! 開始找 db 中的 username
@@ -53,6 +58,9 @@ public class JwtAuthFilter extends OncePerRequestFilter{
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.get(), null, authorities);
                 // 將使用者提出請求對應授權(token)且允許授權的結果塞給 SecurityContextHolder (springboot)
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+                System.out.println("★★User present: " + user.isPresent());
+                System.out.println("★★User role: " + (user.isPresent() ? user.get().getRole() : "null"));
             }
         }
         // 以上為 filter, 確認後才進入下方程式

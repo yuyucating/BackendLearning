@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 
 @OpenAPIDefinition
@@ -29,14 +30,13 @@ public class SpringDocConfig {
                                 .scheme("bearer")
                                 .bearerFormat("JWT")
                         )
-                );
+                ).addSecurityItem(new SecurityRequirement().addList("bearerAuth"));
     }
 
     @Bean
     public GroupedOpenApi groupedOpenApi() {
         return GroupedOpenApi.builder().group("public-apis")
-                .pathsToMatch("/v1/users/**", "/v1/segments/**", "/v1/products/**", "/v1/categories/**", "/v1/reviews/**", "/v1/orders/**")
-                // .pathsToMatch("/v1/segments/**")
+                .pathsToMatch("/v1/users/**", "/v1/segments/**", "/v1/products/**", "/v1/categories/**", "/v1/reviews/**", "/v1/orders/**", "/jwt/**")
                 .build();
     }
 }

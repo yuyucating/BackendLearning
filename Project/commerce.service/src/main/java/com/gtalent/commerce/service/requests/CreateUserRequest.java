@@ -135,7 +135,7 @@ public class CreateUserRequest {
         this.lastLoginTime = lastLoginTime;
     }
 
-    public boolean setIsDeleted() {
+    public boolean isDeleted() {
         return isDeleted;
     }
 
