@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.gtalent.commerce.service.models.Order;
@@ -15,10 +18,14 @@ import com.gtalent.commerce.service.models.OrderProduct;
 import com.gtalent.commerce.service.models.Product;
 import com.gtalent.commerce.service.models.User;
 import com.gtalent.commerce.service.repositories.OrderProductRepository;
+import com.gtalent.commerce.service.repositories.OrderRepository;
 import com.gtalent.commerce.service.repositories.ProductRepository;
 import com.gtalent.commerce.service.repositories.UserRepository;
 import com.gtalent.commerce.service.requests.CreateOrderRequest;
-import com.gtalent.commerce.service.responses.OrderRepository;
+import com.gtalent.commerce.service.responses.GetAllOrdersResponse;
+
+import jakarta.persistence.criteria.Predicate;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
@@ -50,24 +57,6 @@ public class OrderService {
         if(createdOrder.isPresent()){
             Order result = createdOrder.get();
             Set<Integer> productKeys = request.getProductQuantity().keySet();
-            for(int i:productKeys){
-                OrderProduct orderProduct = new OrderProduct();
-                orderProduct.setOrder(result);
-
-                Optional<Product> product = productRepository.findById(i);
-                if(product.isPresent()){
-                    orderProduct.setProduct(productRepository.findById(i).get());
-                }else{return null;}
-                
-                orderProduct.setQty(request.getProductQuantity().get(i));
-                orderProductRepository.save(orderProduct);
-            }
-
-            //將產品資訊統計到訂單
-            // Map<Product, Integer> pQ = new HashMap<>();
-            // for(OrderProduct op:result.getOrderProducts()){
-            //     pQ.put(op.getProduct(), op.getQty());
-            // }
 
             // 建立一個 list 暫存剛建立的 OrderProduct
             List<OrderProduct> orderProducts = new ArrayList<>();
@@ -97,9 +86,9 @@ public class OrderService {
 
 
             BigDecimal totals= BigDecimal.ZERO;
-            Set<Product> keys = pQ.keySet();
-            for (Product product:keys) {
-                totals = totals.add(product.getPrice());
+            // Set<Product> keys = pQ.keySet();
+            for (Map.Entry<Product, Integer> product:pQ.entrySet()) {
+                totals = totals.add(product.getKey().getPrice()).multiply(new BigDecimal(product.getValue()));
             }
             
             result.setTax(totals.add(order.getDeliveryFee()).multiply(new BigDecimal("0.05")));
@@ -109,5 +98,26 @@ public class OrderService {
 
         }else{return null;}
 
+    }
+
+    @Transactional(readOnly = true)
+    public Page<GetAllOrdersResponse> getAllOrders(String kind, PageRequest pageRequest){
+        Specification<Order> spec = orderSpecification(kind);
+
+        Page<Order> orders = orderRepository.findAll(spec, pageRequest);
+
+        return orders.map(order->new GetAllOrdersResponse(order));
+    }
+
+    private Specification<Order> orderSpecification(String kind){
+        return ((root, query, criteriaBuilder)->{
+            List<Predicate> predicates = new ArrayList<>();
+            if(kind!=null && !kind.isEmpty()){
+                predicates.add(criteriaBuilder.equal(root.get("status"), kind));
+            }
+
+            Predicate[] predicateArray = predicates.toArray(new Predicate[0]);
+            return criteriaBuilder.and(predicateArray);
+        });
     }
 }

@@ -1,7 +1,7 @@
 package com.gtalent.commerce.service.models;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class Order {
     @Column(name="order_id", nullable=false)
     private int id;
     @Column(name="date", nullable=false)
-    private LocalDate date = LocalDate.now();
+    private LocalDateTime datetime = LocalDateTime.now();
     @Column(name="status", nullable=false)
     private String status = "ordered";
 
@@ -50,4 +50,28 @@ public class Order {
 
     @OneToMany(mappedBy="order", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
     private List<OrderProduct> orderProducts = new ArrayList<>();
+
+    public BigDecimal getTotals(){
+        BigDecimal totals = BigDecimal.ZERO;
+        for(OrderProduct op:this.orderProducts){
+            totals = totals.add(op.getProduct().getPrice().multiply(new BigDecimal(op.getQty())));
+        }
+        totals = totals.add(this.deliveryFee);
+        totals = totals.add(this.deliveryFee.multiply(new BigDecimal("0.05")));
+
+        return totals;
+    }
+
+    public BigDecimal getTotals(List<OrderProduct> ops, BigDecimal deliveryFee){
+        BigDecimal totals = BigDecimal.ZERO;
+        for(OrderProduct op:ops){
+            totals = totals.add(op.getProduct().getPrice().multiply(new BigDecimal(op.getQty())));
+        }
+        totals = totals.add(deliveryFee);
+        totals = totals.add(deliveryFee.multiply(new BigDecimal("0.05")));
+
+        return totals;
+    }
+
+
 }

@@ -27,8 +27,9 @@ public class SecurityConfig {
         httpSecurity.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(authz -> authz
         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
         .requestMatchers("/jwt/**").permitAll()
-        .requestMatchers(HttpMethod.POST,"/v1/orders/**").hasRole("USER")
+        .requestMatchers("/v1/users/**","/v1/orders/**").permitAll()
         .requestMatchers(HttpMethod.DELETE,"/v1/users/**").hasRole("ADMIN")
+        .requestMatchers(HttpMethod.POST,"/v1/orders/**").hasRole("USER")
         .anyRequest().authenticated()
         ).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); //用 jwtAuthFilter 檢查驗證

@@ -1,18 +1,16 @@
 package com.gtalent.commerce.service.responses;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.gtalent.commerce.service.models.Order;
 import com.gtalent.commerce.service.models.OrderProduct;
-import com.gtalent.commerce.service.models.Product;
-import com.gtalent.commerce.service.models.User;
 
 public class CreateOrderResponse {
     private int userId;
-    private LocalDate date;
+    private LocalDateTime datetime;
     private Map<String, Integer> productQty = new HashMap<>();
     private BigDecimal deliveryFee=BigDecimal.ZERO;
     private BigDecimal tax=BigDecimal.ZERO;
@@ -25,7 +23,7 @@ public class CreateOrderResponse {
 
     public CreateOrderResponse(Order order){
         this.userId = order.getUser().getId();
-        this.date = order.getDate();
+        this.datetime = order.getDatetime();
         
         this.totals = BigDecimal.ZERO;
         for(OrderProduct product: order.getOrderProducts()){
@@ -48,12 +46,12 @@ public class CreateOrderResponse {
         this.userId = userId;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDateTime getDatetime() {
+        return datetime;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setDate(LocalDateTime datetime) {
+        this.datetime = datetime;
     }
 
     public Map<String, Integer> getProductQty() {
