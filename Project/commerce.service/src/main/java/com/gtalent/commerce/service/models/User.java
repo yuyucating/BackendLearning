@@ -51,7 +51,7 @@ public class User {
     @Column(name="has_newsletter", nullable=false)
     private boolean hasNewsletter = true;
 
-    @OneToMany(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.LAZY) //對應 UserSegment 裡面的 user 資料
+    @OneToMany(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.EAGER) //對應 UserSegment 裡面的 user 資料
     private List<UserSegment> userSegments;
 
     @Column(name="last_login_time")
@@ -59,10 +59,10 @@ public class User {
     @Column(name="is_deleted", nullable=false)
     private boolean isDeleted = false;
 
-    @OneToMany(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.LAZY) //對應 UserSegment 裡面的 user 資料
+    @OneToMany(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.EAGER) //對應 UserSegment 裡面的 user 資料
     private List<Order> orders;
 
-    @OneToMany(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    @OneToMany(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private List<Review> review;
     
 }

@@ -33,6 +33,6 @@ public class Category {
     private boolean isDeleted = false;
 
     //一個 category 會對應多個 products
-    @OneToMany(mappedBy="category", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    @OneToMany(mappedBy="category", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private List<Product> products;
 }

@@ -48,7 +48,7 @@ public class Order {
     @Column(name="tax", nullable=false)
     private BigDecimal tax = BigDecimal.ZERO;
 
-    @OneToMany(mappedBy="order", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    @OneToMany(mappedBy="order", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private List<OrderProduct> orderProducts = new ArrayList<>();
 
     public BigDecimal getTotals(){

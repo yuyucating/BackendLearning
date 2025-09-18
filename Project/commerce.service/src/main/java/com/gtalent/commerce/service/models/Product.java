@@ -34,7 +34,7 @@ public class Product {
     private String description;
 
     // 好多個 Product 有機會對到同一個 Category
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="category_id")
     private Category category;
 
@@ -55,10 +55,10 @@ public class Product {
     @Column(name="is_deleted",nullable=false)
     private boolean isDeleted=false;
 
-    @OneToMany(mappedBy="product", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    @OneToMany(mappedBy="product", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private List<OrderProduct> orderProducts;
 
-    @OneToMany(mappedBy="product", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    @OneToMany(mappedBy="product", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private List<Review> review;
 
 }

@@ -27,6 +27,6 @@ public class Segment {
     @Column(name="segment_name", nullable=false)
     private String name;
 
-    @OneToMany(mappedBy="segment", fetch=FetchType.LAZY)
+    @OneToMany(mappedBy="segment", fetch=FetchType.EAGER)
     private List<UserSegment> userSegments;
 }
