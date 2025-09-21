@@ -8,7 +8,7 @@ import java.util.Map;
 import com.gtalent.commerce.service.models.Order;
 import com.gtalent.commerce.service.models.OrderProduct;
 
-public class CreateOrderResponse {
+public class CreateOrderResponse_ {
     private int userId;
     private LocalDateTime datetime;
     private Map<String, Integer> productQty = new HashMap<>();
@@ -17,11 +17,11 @@ public class CreateOrderResponse {
     private BigDecimal totals=BigDecimal.ZERO;
     private String status;
 
-    public CreateOrderResponse(){
+    public CreateOrderResponse_(){
 
     }
 
-    public CreateOrderResponse(Order order){
+    public CreateOrderResponse_(Order order){
         this.userId = order.getUser().getId();
         this.datetime = order.getDatetime();
         
