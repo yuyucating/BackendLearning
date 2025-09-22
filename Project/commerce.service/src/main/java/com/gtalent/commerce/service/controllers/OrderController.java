@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gtalent.commerce.service.models.Order;
 import com.gtalent.commerce.service.requests.CreateOrderRequest;
-import com.gtalent.commerce.service.responses.CreateOrderResponse_;
+import com.gtalent.commerce.service.responses.CreateOrderResponse;
 import com.gtalent.commerce.service.responses.GetAllOrdersResponse;
 import com.gtalent.commerce.service.services.OrderService;
 
@@ -34,10 +34,10 @@ public class OrderController {
 
     //??
     @PostMapping
-    public ResponseEntity<CreateOrderResponse_> createOrder(@RequestBody CreateOrderRequest request){
+    public ResponseEntity<CreateOrderResponse> createOrder(@RequestBody CreateOrderRequest request){
         Order order = orderService.createOrder(request);
         if(order!=null){
-            CreateOrderResponse_ response = new CreateOrderResponse_(order);
+            CreateOrderResponse response = new CreateOrderResponse(order);
             System.out.println("★☆★☆"+response.getDatetime());
             return ResponseEntity.ok(response);
         }else{

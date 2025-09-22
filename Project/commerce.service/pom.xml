@@ -96,7 +96,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
-		<plugin>
+		<!-- <plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-compiler-plugin</artifactId>
 			<version>3.10.1</version>
@@ -112,7 +112,7 @@
 					<arg>-parameters</arg>
 				</compilerArgs>
 			</configuration>
-		</plugin>
+		</plugin> -->
 	</build>
 
 </project>
