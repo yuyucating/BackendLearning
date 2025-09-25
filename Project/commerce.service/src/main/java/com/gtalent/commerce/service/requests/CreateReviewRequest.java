@@ -1,48 +1,34 @@
 package com.gtalent.commerce.service.requests;
 
-import java.time.LocalDate;
-
-import com.gtalent.commerce.service.enums.Rating;
-
 public class CreateReviewRequest {
-    private String userFirstName;
-    private String userLastName;
-    private String product;
+    private int userId;
+    private int productId;
     // private Rating rating;
     private String comment;
 
     public CreateReviewRequest() {
     }
 
-    public CreateReviewRequest(String comment, String product, String userFirstName, String userLastName) {
+    public CreateReviewRequest(int userId, String comment, int productId) {
         this.comment = comment;
-        this.product = product;
-        this.userFirstName = userFirstName;
-        this.userLastName = userLastName;
+        this.productId = productId;
+        this.userId = userId;
     }
 
-    public String getUserFirstName() {
-        return userFirstName;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUserFirstName(String userFirstName) {
-        this.userFirstName = userFirstName;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
-    public String getUserLastName() {
-        return userLastName;
+    public int getProductId() {
+        return productId;
     }
 
-    public void setUserLastName(String userLastName) {
-        this.userLastName = userLastName;
-    }
-
-    public String getProduct() {
-        return product;
-    }
-
-    public void setProduct(String product) {
-        this.product = product;
+    public void setProduct(int productId) {
+        this.productId = productId;
     }
 
     public String getComment() {

@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import com.gtalent.commerce.service.models.Category;
 import com.gtalent.commerce.service.models.Product;
 
-public class ProductDetailsResponse {
+public class CreateProductResponse {
     private String name;
     private String categoryName;
     private float width;
@@ -14,10 +14,10 @@ public class ProductDetailsResponse {
     private int stock = 0;
     private int sales = 0;
 
-    public ProductDetailsResponse() {
+    public CreateProductResponse() {
     }
 
-    public ProductDetailsResponse(String name, Category category, float width, float height, BigDecimal price,
+    public CreateProductResponse(String name, Category category, float width, float height, BigDecimal price,
             int stock, int sales) {
         this.name = name;
         this.categoryName = category.getName();
@@ -28,7 +28,7 @@ public class ProductDetailsResponse {
         this.sales = sales;
     }
 
-    public ProductDetailsResponse(Product product) {
+    public CreateProductResponse(Product product) {
         this.name = product.getName();
         this.categoryName = product.getCategory().getName();
         this.width = product.getWidth();

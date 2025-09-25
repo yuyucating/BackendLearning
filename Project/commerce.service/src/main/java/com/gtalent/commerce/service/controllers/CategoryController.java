@@ -20,10 +20,12 @@ import com.gtalent.commerce.service.responses.GetCategoryResponse;
 import com.gtalent.commerce.service.services.CategoryService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("v1/categories")
 @CrossOrigin("*")
+@Tag(name="Category Controller")
 public class CategoryController {
     private final CategoryService categoryService;
 
@@ -42,8 +44,6 @@ public class CategoryController {
         return ResponseEntity.ok(categories.stream().map(GetCategoryResponse::new).toList());
     }
 
-    //TODO: getcategoryproducts
-
     @PutMapping("/{id}")
     public ResponseEntity<GetCategoryProductsResponse> updateCategory(@PathVariable int id, @RequestBody UpdateCategoryRequest request){
         // 為了先檢查資料是否存在!
@@ -51,9 +51,7 @@ public class CategoryController {
 
         if(categoryProducts!=null){
             return ResponseEntity.ok(categoryProducts);
-        }else{
-            return ResponseEntity.notFound().build();
-        }
+        }return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")

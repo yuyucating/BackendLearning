@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gtalent.commerce.service.enums.OrderStatus;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,7 +37,7 @@ public class Order {
     @Column(name="date", nullable=false)
     private LocalDateTime datetime = LocalDateTime.now();
     @Column(name="status", nullable=false)
-    private String status = "ordered";
+    private OrderStatus status;
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="user_id", nullable=false)
@@ -71,6 +73,15 @@ public class Order {
         totals = totals.add(deliveryFee.multiply(new BigDecimal("0.05")));
 
         return totals;
+    }
+
+    public BigDecimal getSum(){
+        BigDecimal sum = BigDecimal.ZERO;
+        for(OrderProduct op:this.orderProducts){
+            sum = sum.add(op.getProduct().getPrice().multiply(new BigDecimal(op.getQty())));
+        }
+
+        return sum;
     }
 
 

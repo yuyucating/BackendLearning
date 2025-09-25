@@ -17,9 +17,12 @@ import com.gtalent.commerce.service.responses.SegmentResponse;
 import com.gtalent.commerce.service.services.SegmentService;
 import com.gtalent.commerce.service.services.UserSegmentService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("v1/segments")
 @CrossOrigin("*")
+@Tag(name="Segment Controller")
 public class SegmentController {
     private final SegmentService segmentService;
     private final UserSegmentService userSegmentService;

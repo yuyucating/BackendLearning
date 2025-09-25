@@ -22,6 +22,7 @@ import com.gtalent.commerce.service.repositories.ProductRepository;
 import com.gtalent.commerce.service.repositories.ReviewRepository;
 import com.gtalent.commerce.service.repositories.UserRepository;
 import com.gtalent.commerce.service.requests.CreateReviewRequest;
+import com.gtalent.commerce.service.requests.IdListRequest;
 import com.gtalent.commerce.service.requests.UpdateReviewStatusRequest;
 
 @Service
@@ -62,11 +63,11 @@ public class ReviewService {
             }
         }
         
-        List<User> users = userRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(request.getUserFirstName(), request.getUserLastName());
+        Optional<User> users = userRepository.findById(request.getUserId());
         if(!users.isEmpty() && users!=null){
-            review.setUser(users.get(0));
+            review.setUser(users.get());
         }else{return null;}
-        Optional<Product> product = productRepository.findByName(request.getProduct());
+        Optional<Product> product = productRepository.findById(request.getProductId());
         if(product!=null){
             review.setProduct(product.get());
         }
@@ -93,7 +94,15 @@ public class ReviewService {
         }  
     }
 
-    public List<Review> getReviewPage(UpdateReviewStatusRequest request){
+    public Page<Review> getProductReviews(Product product, PageRequest pageRequest){
+        List<Review> reviews = reviewRepository.findByProduct(product);
+        if(reviews!=null && !reviews.isEmpty()){
+            Page<Review> results = new PageImpl<>(reviews, pageRequest, reviews.size());
+            return results;
+        }return null;
+    }
+
+    public List<Review> updateReview(UpdateReviewStatusRequest request){
         List<Review> results = new ArrayList<>();
         List<Integer> ids = request.getIds();
         for (Integer id : ids) {
@@ -109,5 +118,18 @@ public class ReviewService {
             }
         }
         return results;
+    }
+
+    public List<Review> updateReviews(IdListRequest request, String status){
+        List<Review> reviews = reviewRepository.findAllById(request.getIds());
+        List<Review> results = new ArrayList<>();
+        if(reviews!=null && !reviews.isEmpty()){
+            for(Review review:reviews){
+                review.setStatus(ReviewStatus.valueOf(status));
+                reviewRepository.save(review);
+                results.add(review);
+            }
+            return results;
+        }return null;
     }
 }

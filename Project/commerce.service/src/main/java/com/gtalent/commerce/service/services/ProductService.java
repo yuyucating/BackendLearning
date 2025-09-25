@@ -63,6 +63,13 @@ public class ProductService {
         return newProduct;
     }
 
+    public Product getProduct(int id){
+        Optional<Product> product = productRepository.findById(id);
+        if(product!=null&&!product.isEmpty()){
+            Product result = product.get();
+            return result;
+        }else{return null;}
+    }
     public Page<Product> getAllProduct2(String query, Integer stockFrom, Integer stockTo, String category, PageRequest pageRequest){
         Specification<Product> spec = productSpecification(query, stockFrom, stockTo, category, false);
         return productRepository.findAll(spec, pageRequest);
@@ -90,6 +97,24 @@ public class ProductService {
             Predicate[] predicateArray = predicates.toArray(new Predicate[0]);
             return criteriaBuilder.and(predicateArray);
         });
+    }
+
+    public Product updateProducts(int id, CreateProductRequest request){
+        Optional<Product> product = productRepository.findById(id);
+        if(product!=null&&!product.isEmpty()){
+            Product result = product.get();
+            result.setName(request.getName());
+            result.setWidth(request.getWidth());
+            result.setHeight(request.getHeight());
+            result.setPrice(request.getPrice());
+            result.setStock(request.getStock());
+            result.setSales(request.getSales());
+            result.setImageUrl(request.getImageUrl());
+            result.setImageThumbnail(request.getImageThumbnail());
+            result.setDescription(result.getDescription());
+            productRepository.save(result);
+            return result;
+        }else{return null;}
     }
 
     public boolean deleteProduct(int id){

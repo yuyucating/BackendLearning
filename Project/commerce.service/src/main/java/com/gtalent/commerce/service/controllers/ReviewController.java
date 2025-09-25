@@ -18,16 +18,20 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gtalent.commerce.service.models.Review;
 import com.gtalent.commerce.service.repositories.UserRepository;
 import com.gtalent.commerce.service.requests.CreateReviewRequest;
+import com.gtalent.commerce.service.requests.IdListRequest;
 import com.gtalent.commerce.service.requests.UpdateReviewStatusRequest;
 import com.gtalent.commerce.service.responses.ReviewsResponse;
 import com.gtalent.commerce.service.services.ReviewService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("v1/reviews")
 @CrossOrigin("*")
+@Tag(name="Review Controller")
 public class ReviewController {
     private final ReviewService reviewService;
 
@@ -70,9 +74,15 @@ public class ReviewController {
         }
     }
 
+    @Operation(summary="Update review(s) status",
+    description="This API updates review(s) with specified review ids.")
     @PutMapping("/status")
-    public ResponseEntity<List<ReviewsResponse>> getReviewPage(@RequestBody UpdateReviewStatusRequest request){
-        List<Review> reviews = reviewService.getReviewPage(request);
+    public ResponseEntity<List<ReviewsResponse>> updateReviews(@RequestBody IdListRequest request,
+    @Parameter(
+        description="Review status",
+        schema=@Schema(allowableValues = {"Accept", "Reject"})
+    )@RequestParam(required=true) String status){
+        List<Review> reviews = reviewService.updateReviews(request, status);
 
         if(reviews!=null && !reviews.isEmpty()){
             return ResponseEntity.ok(reviews.stream().map(ReviewsResponse::new).toList());

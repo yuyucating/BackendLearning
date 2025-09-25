@@ -64,5 +64,9 @@ public class User {
 
     @OneToMany(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private List<Review> review;
+
+    public String getFullName(){
+        return this.firstName+" "+this.lastName;
+    }
     
 }

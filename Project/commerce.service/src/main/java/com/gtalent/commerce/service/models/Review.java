@@ -32,11 +32,11 @@ public class Review {
     private int id;
     
     //一個 review 會對應一個 user
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="user_id")
     private User user;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="product_id")
     private Product product;
 

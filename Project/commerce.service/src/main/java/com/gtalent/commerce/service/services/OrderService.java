@@ -25,7 +25,11 @@ import com.gtalent.commerce.service.requests.CreateOrderRequest;
 import com.gtalent.commerce.service.responses.GetAllOrdersResponse;
 
 import jakarta.persistence.criteria.Predicate;
+
 import org.springframework.transaction.annotation.Transactional;
+
+import com.gtalent.commerce.service.enums.OrderStatus;
+import com.gtalent.commerce.service.requests.IdListRequest;
 
 @Service
 public class OrderService {
@@ -100,6 +104,14 @@ public class OrderService {
 
     }
 
+    public Order getOrder(int id){
+        Optional<Order> order = orderRepository.findById(id);
+        if(order!=null && !order.isEmpty()){
+            Order result = order.get();
+            return result;
+        }return null;
+    }
+
     @Transactional(readOnly = true)
     public Page<GetAllOrdersResponse> getAllOrders(String kind, PageRequest pageRequest){
         Specification<Order> spec = orderSpecification(kind);
@@ -119,5 +131,24 @@ public class OrderService {
             Predicate[] predicateArray = predicates.toArray(new Predicate[0]);
             return criteriaBuilder.and(predicateArray);
         });
+    }
+
+    public Order updateOrderStatus(int id, String status){
+        Optional<Order> order = orderRepository.findById(id);
+        if(order!=null && !order.isEmpty()){
+            Order result = order.get();
+            result.setStatus(OrderStatus.valueOf(status));
+            orderRepository.save(result);
+            return result;
+        }else{return null;}
+    }
+
+    public List<Order> deleteOrders(IdListRequest request){
+        List<Order> orders = orderRepository.findAllById(request.getIds());
+        if(orders!=null && !orders.isEmpty()){
+            orderRepository.deleteAllById(request.getIds());
+            return orders;
+        }
+        return null;
     }
 }

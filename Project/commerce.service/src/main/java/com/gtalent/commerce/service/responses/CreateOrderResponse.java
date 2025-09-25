@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.gtalent.commerce.service.enums.OrderStatus;
 import com.gtalent.commerce.service.models.Order;
 import com.gtalent.commerce.service.models.OrderProduct;
 
@@ -15,7 +16,7 @@ public class CreateOrderResponse {
     private BigDecimal deliveryFee=BigDecimal.ZERO;
     private BigDecimal tax=BigDecimal.ZERO;
     private BigDecimal totals=BigDecimal.ZERO;
-    private String status;
+    private OrderStatus status;
 
     public CreateOrderResponse(){
 
@@ -86,11 +87,11 @@ public class CreateOrderResponse {
         this.totals = totals;
     }
 
-    public String getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(OrderStatus status) {
         this.status = status;
     }
 

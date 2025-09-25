@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gtalent.commerce.service.models.User;
 import com.gtalent.commerce.service.requests.CreateUserRequest;
+import com.gtalent.commerce.service.requests.IdListRequest;
 import com.gtalent.commerce.service.requests.UpdateUserRequest;
+import com.gtalent.commerce.service.responses.DeleteUserResponse;
 import com.gtalent.commerce.service.responses.GetUserListResponse;
 import com.gtalent.commerce.service.responses.GetUserResponse;
 import com.gtalent.commerce.service.services.UserSegmentService;
@@ -28,10 +30,12 @@ import com.gtalent.commerce.service.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("v1/users")
 @CrossOrigin("*")
+@Tag(name="User Controller")
 public class UserController {
     private final UserService userService;
     private final UserSegmentService userSegmentService;
@@ -54,10 +58,7 @@ public class UserController {
                 user.getState(), user.getZipcode(), user.isHasNewsletter(),
                 user.getUserSegments(), user.getLastLoginTime(), user.isDeleted());
             return ResponseEntity.ok(response);
-        }else{
-            return ResponseEntity.notFound().build();
-        }
-        
+        }return ResponseEntity.notFound().build();  
     }
 
     @Operation(summary="Get all undeleted users", description="This API returns all undeleted users.")
@@ -111,10 +112,10 @@ public class UserController {
         Page<User> users = userService.getAllUsers2(query, hasNewsLetter, segmentId, pageRequest);
         if(users==null || users.isEmpty()){
             return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(users.map(GetUserListResponse::new));
+        }return ResponseEntity.ok(users.map(GetUserListResponse::new));
     }
 
+    @Operation(summary="Update user", description="This API updates user information with specified user id.")
     @PutMapping("/{id}")
     public ResponseEntity<GetUserResponse> updateUser(@PathVariable int id, @RequestBody UpdateUserRequest request){
         // 為了先檢查資料是否存在!
@@ -122,11 +123,11 @@ public class UserController {
 
         if(user!=null){
             return ResponseEntity.ok(user);
-        }else{
-            return ResponseEntity.notFound().build();
-        }
+        }return ResponseEntity.notFound().build();
     }
 
+    @Operation(summary="Delete user",
+    description="This API deletes user with specified user id.<br>p.s. Set 'isDeleted' as true.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable int id){
         boolean check = userService.deleteUser(id);
@@ -137,6 +138,17 @@ public class UserController {
         }
     }
 
+    @Operation(summary="Delete users",
+    description="This API deletes users with specified user ids.<br>p.s. Set 'isDeleted' as true.")
+    @PutMapping("/delete")
+    public ResponseEntity<List<DeleteUserResponse>> deleteUsers(@RequestBody IdListRequest request){
+        List<User> users = userService.deleteUsers(request);
+        if(users!=null && !users.isEmpty()){
+            return ResponseEntity.ok(users.stream().map(DeleteUserResponse::new).toList());
+        }
+        return ResponseEntity.noContent().build();
+    }
+
     @Operation(summary="Assign UserSegment with user_id & segment_id",
     description="<b>Segment:</b><ol><li>Compulsive</li><li>Collector</li><li>Ordered once</li><li>Regular</li><li>Return</li><li>Reviewer</li></ol>")
     @GetMapping("/{id}/segments/{segmentId}")
@@ -144,7 +156,6 @@ public class UserController {
         userSegmentService.assignUserSegment(id, segmentId);
         return ResponseEntity.ok().build();
     }
-
 
 
 }

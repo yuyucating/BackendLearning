@@ -20,6 +20,7 @@ import com.gtalent.commerce.service.repositories.SegmentRepository;
 import com.gtalent.commerce.service.repositories.UserRepository;
 import com.gtalent.commerce.service.repositories.UserSegmentRepository;
 import com.gtalent.commerce.service.requests.CreateUserRequest;
+import com.gtalent.commerce.service.requests.IdListRequest;
 import com.gtalent.commerce.service.requests.UpdateUserRequest;
 import com.gtalent.commerce.service.responses.GetUserResponse;
 
@@ -219,6 +220,16 @@ public class UserService {
         } else{
             return false;
         }
+    }
+
+    public List<User> deleteUsers(IdListRequest request){
+        List<User> users = userRepository.findAllById(request.getIds());
+        if(users!=null && !users.isEmpty()){
+            for(User user:users){
+                user.setDeleted(true);
+            }
+            return users;
+        }else{return null;}
     }
 
 }
