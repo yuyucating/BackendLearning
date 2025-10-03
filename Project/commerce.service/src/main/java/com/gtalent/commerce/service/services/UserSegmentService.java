@@ -42,6 +42,15 @@ public class UserSegmentService {
 
     }
 
+    public List<UserSegment> getUserSegments(User user){
+        try{
+            List<UserSegment> userSegments = userSegmentRepository.findByUser(user);
+            return userSegments;
+        }catch(Exception e){
+            return new ArrayList<>();
+        }
+    }
+
     public List<User> getSegmentUsers(int id){
         try{
             List<User> users = userRepository.findByUserSegmentsSegmentId(id);

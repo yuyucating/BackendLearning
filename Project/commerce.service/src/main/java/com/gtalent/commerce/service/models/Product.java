@@ -1,6 +1,7 @@
 package com.gtalent.commerce.service.models;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -56,9 +57,9 @@ public class Product {
     private boolean isDeleted=false;
 
     @OneToMany(mappedBy="product", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-    private List<OrderProduct> orderProducts;
+    private List<OrderProduct> orderProducts = new ArrayList<>();
 
     @OneToMany(mappedBy="product", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-    private List<Review> review;
+    private List<Review> review = new ArrayList<>();
 
 }

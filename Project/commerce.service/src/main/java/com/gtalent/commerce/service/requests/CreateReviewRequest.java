@@ -27,7 +27,7 @@ public class CreateReviewRequest {
         return productId;
     }
 
-    public void setProduct(int productId) {
+    public void setProductId(int productId) {
         this.productId = productId;
     }
 

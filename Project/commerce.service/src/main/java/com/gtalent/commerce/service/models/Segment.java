@@ -1,5 +1,6 @@
 package com.gtalent.commerce.service.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -28,5 +29,5 @@ public class Segment {
     private String name;
 
     @OneToMany(mappedBy="segment", fetch=FetchType.EAGER)
-    private List<UserSegment> userSegments;
+    private List<UserSegment> userSegments = new ArrayList<>();
 }

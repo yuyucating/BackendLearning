@@ -1,5 +1,6 @@
 package com.gtalent.commerce.service.responses;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.gtalent.commerce.service.models.Category;
@@ -7,7 +8,7 @@ import com.gtalent.commerce.service.models.Product;
 
 public class GetCategoryProductsResponse {
     private String name;
-    private List<Product> products; //todo: show product information?
+    private List<Product> products = new ArrayList<>(); //todo: show product information?
 
     public GetCategoryProductsResponse() {
     }

@@ -2,6 +2,7 @@ package com.gtalent.commerce.service.responses;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.gtalent.commerce.service.enums.OrderStatus;
@@ -17,7 +18,7 @@ public class GetOrderResponse {
     private OrderStatus status;
     private boolean isReturned;
     private String address;
-    private List<OrderProductsResponse> items;
+    private List<OrderProductsResponse> items = new ArrayList<>();
     private BigDecimal sum;
     private BigDecimal delivery;
     private BigDecimal tax;

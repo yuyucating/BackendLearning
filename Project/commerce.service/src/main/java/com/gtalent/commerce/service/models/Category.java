@@ -1,5 +1,6 @@
 package com.gtalent.commerce.service.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -34,5 +35,5 @@ public class Category {
 
     //一個 category 會對應多個 products
     @OneToMany(mappedBy="category", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-    private List<Product> products;
+    private List<Product> products = new ArrayList<>();
 }

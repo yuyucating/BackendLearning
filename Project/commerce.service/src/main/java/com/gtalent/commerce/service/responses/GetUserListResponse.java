@@ -1,6 +1,7 @@
 package com.gtalent.commerce.service.responses;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.gtalent.commerce.service.models.User;
@@ -14,7 +15,7 @@ public class GetUserListResponse {
     private float totalSpent;
     private LocalDateTime latestPurchase;
     private boolean has_newletter;
-    private List<String> segments;
+    private List<String> segments = new ArrayList<>();
     
     public GetUserListResponse() {
     }

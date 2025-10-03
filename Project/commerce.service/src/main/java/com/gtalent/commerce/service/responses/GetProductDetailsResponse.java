@@ -1,13 +1,7 @@
 package com.gtalent.commerce.service.responses;
 
 import java.math.BigDecimal;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-
 import com.gtalent.commerce.service.models.Product;
-import com.gtalent.commerce.service.models.Review;
-import com.gtalent.commerce.service.services.ReviewService;
 
 public class GetProductDetailsResponse {
     private String imageUrl;
@@ -20,9 +14,8 @@ public class GetProductDetailsResponse {
     private int stock;
     private int sales;
     private String description;
-    private Page<ProductReviewsResponse> reviews;
 
-    public GetProductDetailsResponse(Product product, PageRequest pageRequest){
+    public GetProductDetailsResponse(Product product){
         this.imageUrl = product.getImageUrl();
         this.imageThumbnail = product.getImageThumbnail();
         this.name = product.getName();
@@ -33,7 +26,6 @@ public class GetProductDetailsResponse {
         this.stock = product.getStock();
         this.sales = product.getSales();
         this.description = product.getDescription();
-        this.reviews = getReviews(product, pageRequest);
     }
 
     public String getImageUrl() {
@@ -76,18 +68,4 @@ public class GetProductDetailsResponse {
         return description;
     }
 
-    public Page<ProductReviewsResponse> getReviews() {
-        return reviews;
-    }
-
-    private Page<ProductReviewsResponse> getReviews(Product product, PageRequest pageRequest){
-        ReviewService reviewService = new ReviewService(null, null, null);
-        Page<Review> reviews = reviewService.getProductReviews(product, pageRequest);
-        if(reviews==null || reviews.isEmpty()){
-            return null;
-        }else{
-            Page<ProductReviewsResponse> response = reviews.map(ProductReviewsResponse::new);
-            return response;
-        }
-    }
 }

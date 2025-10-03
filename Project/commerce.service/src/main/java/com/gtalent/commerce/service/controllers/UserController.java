@@ -1,5 +1,6 @@
 package com.gtalent.commerce.service.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gtalent.commerce.service.models.User;
+import com.gtalent.commerce.service.models.UserSegment;
 import com.gtalent.commerce.service.requests.CreateUserRequest;
 import com.gtalent.commerce.service.requests.IdListRequest;
 import com.gtalent.commerce.service.requests.UpdateUserRequest;
@@ -33,7 +34,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("v1/users")
+@RequestMapping("/v1/users")
 @CrossOrigin("*")
 @Tag(name="User Controller")
 public class UserController {
@@ -53,18 +54,38 @@ public class UserController {
         User user = userService.createUser(request);
 
         if(user!=null){
+            List<String> userSegments = user.getUserSegments().stream().map(us -> us.getSegment().getName()).toList();
+            if (userSegments==null || userSegments.isEmpty()){
+                userSegments = new ArrayList<>();
+            }
             GetUserResponse response = new GetUserResponse(user.getFirstName(), user.getLastName(),
                 user.getEmail(), user.getBirthday(), user.getAddress(), user.getCity(),
                 user.getState(), user.getZipcode(), user.isHasNewsletter(),
-                user.getUserSegments(), user.getLastLoginTime(), user.isDeleted());
+                userSegments, user.getLastLoginTime(), user.isDeleted());
             return ResponseEntity.ok(response);
         }return ResponseEntity.notFound().build();  
+    }
+
+    @Operation(summary="Get user by Id", description="This API returns user information with specified user id.")
+    @GetMapping("/{id}")
+    public ResponseEntity<GetUserResponse> getUser(@PathVariable int id){
+        // 為了先檢查資料是否存在!
+        User user = userService.getUser(id);
+        List<UserSegment> userSegments = userSegmentService.getUserSegments(user);
+        List<String> segments = userSegments.stream().map(userSegment -> userSegment.getSegment().getName()).toList();
+        GetUserResponse result = new GetUserResponse(segments, user);
+        if(result!=null){
+            return ResponseEntity.ok(result);
+        }return ResponseEntity.notFound().build();
     }
 
     @Operation(summary="Get all undeleted users", description="This API returns all undeleted users.")
     @GetMapping
     public ResponseEntity<List<GetUserListResponse>> getAllUsers(){
         List<User> users = userService.getAllUsers(); //調整為篩出 is_deleted=false
+        if(users==null || users.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
 
         System.out.print(users.stream().map(GetUserListResponse::new).toList());
         return ResponseEntity.ok(users.stream().map(GetUserListResponse::new).toList());
@@ -128,7 +149,7 @@ public class UserController {
 
     @Operation(summary="Delete user",
     description="This API deletes user with specified user id.<br>p.s. Set 'isDeleted' as true.")
-    @DeleteMapping("/{id}")
+    @PutMapping("/delete/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable int id){
         boolean check = userService.deleteUser(id);
         if(check){
@@ -151,7 +172,7 @@ public class UserController {
 
     @Operation(summary="Assign UserSegment with user_id & segment_id",
     description="<b>Segment:</b><ol><li>Compulsive</li><li>Collector</li><li>Ordered once</li><li>Regular</li><li>Return</li><li>Reviewer</li></ol>")
-    @GetMapping("/{id}/segments/{segmentId}")
+    @PostMapping("/{id}/segments/{segmentId}")
     public ResponseEntity<Void>assignUserSegment(@PathVariable int id, @PathVariable int segmentId){
         userSegmentService.assignUserSegment(id, segmentId);
         return ResponseEntity.ok().build();

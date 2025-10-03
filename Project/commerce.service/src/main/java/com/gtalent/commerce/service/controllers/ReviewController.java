@@ -80,7 +80,7 @@ public class ReviewController {
     public ResponseEntity<List<ReviewsResponse>> updateReviews(@RequestBody IdListRequest request,
     @Parameter(
         description="Review status",
-        schema=@Schema(allowableValues = {"Accept", "Reject"})
+        schema=@Schema(allowableValues = {"Accepted", "Rejected"})
     )@RequestParam(required=true) String status){
         List<Review> reviews = reviewService.updateReviews(request, status);
 

@@ -32,7 +32,7 @@ public class JwtAuthFilter extends OncePerRequestFilter{
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException{
-         String authHeader = request.getHeader("Authorization");
+        String authHeader = request.getHeader("Authorization");
 
         if(authHeader==null || !authHeader.startsWith("Bearer ")){ //確認格式是不是正確的 Authorization
             //該次請求過濾器結束生命週期
@@ -51,11 +51,15 @@ public class JwtAuthFilter extends OncePerRequestFilter{
             if(user.isPresent()){ //判斷 user 是否存在
                 Collection<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.get().getRole())); 
                 // ↑ 此 token 為 Spring Security 使用的 token (包含 user & authorities)
+                System.out.println("★★★\nAuthorities: " + authorities + "\n★★★");
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.get(), null, authorities);
                 // 將使用者提出請求對應授權(token)且允許授權的結果塞給 SecurityContextHolder (springboot)
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                System.out.println("★★★\nUser authenticated: " + email);
+                System.out.println("★★★\nAuthorities: " + authenticationToken.getAuthorities());
             }
         }
+        
         // 以上為 filter, 確認後才進入下方程式
         filterChain.doFilter(request, response);
     }

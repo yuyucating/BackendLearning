@@ -37,7 +37,7 @@ public class Order {
     @Column(name="date", nullable=false)
     private LocalDateTime datetime = LocalDateTime.now();
     @Column(name="status", nullable=false)
-    private OrderStatus status;
+    private OrderStatus status = OrderStatus.ORDERED;
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="user_id", nullable=false)

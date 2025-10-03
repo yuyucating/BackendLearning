@@ -2,6 +2,7 @@ package com.gtalent.commerce.service.models;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -52,7 +53,7 @@ public class User {
     private boolean hasNewsletter = true;
 
     @OneToMany(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.EAGER) //對應 UserSegment 裡面的 user 資料
-    private List<UserSegment> userSegments;
+    private List<UserSegment> userSegments = new ArrayList<>();
 
     @Column(name="last_login_time")
     private LocalDateTime lastLoginTime;
@@ -60,10 +61,10 @@ public class User {
     private boolean isDeleted = false;
 
     @OneToMany(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.EAGER) //對應 UserSegment 裡面的 user 資料
-    private List<Order> orders;
+    private List<Order> orders = new ArrayList<>();
 
     @OneToMany(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-    private List<Review> review;
+    private List<Review> review = new ArrayList<>();
 
     public String getFullName(){
         return this.firstName+" "+this.lastName;

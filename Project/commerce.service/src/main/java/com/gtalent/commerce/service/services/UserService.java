@@ -67,6 +67,13 @@ public class UserService {
         return newUser;
     }
 
+    public User getUser(int id){
+        Optional<User> user = userRepository.findById(id);
+        if(user!=null && !user.isEmpty()){
+            return user.get();
+        }else{return null;}
+    }
+
     public List<User> getAllUsers(){
         try{
             List<User> users = userRepository.findByIsDeleted(false);
@@ -204,7 +211,7 @@ public class UserService {
             GetUserResponse response = new GetUserResponse(savedUser.getFirstName(), savedUser.getLastName(),
                 savedUser.getEmail(), savedUser.getBirthday(), savedUser.getAddress(), savedUser.getCity(),
                 savedUser.getState(), savedUser.getZipcode(), savedUser.isHasNewsletter(),
-                savedUser.getUserSegments(), savedUser.getLastLoginTime(), savedUser.isDeleted());
+                savedUser.getUserSegments().stream().map(us->us.getSegment().getName()).toList(), savedUser.getLastLoginTime(), savedUser.isDeleted());
             return response;
         }else{
             return null;
@@ -227,6 +234,7 @@ public class UserService {
         if(users!=null && !users.isEmpty()){
             for(User user:users){
                 user.setDeleted(true);
+                userRepository.save(user);
             }
             return users;
         }else{return null;}

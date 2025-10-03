@@ -2,9 +2,13 @@ package com.gtalent.commerce.service.responses;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.gtalent.commerce.service.models.Segment;
+import com.gtalent.commerce.service.models.User;
 import com.gtalent.commerce.service.models.UserSegment;
+import com.gtalent.commerce.service.services.UserSegmentService;
 
 public class GetUserResponse {
     private String firstName;
@@ -16,7 +20,7 @@ public class GetUserResponse {
     private String state;
     private String zipcode;
     private boolean hasNewsletter;
-    private List<UserSegment> userSegments;
+    private List<String> userSegments = new ArrayList<>();
     private LocalDateTime lastLoginTime;
     private boolean isDeleted;
 
@@ -24,7 +28,7 @@ public class GetUserResponse {
     }
 
     public GetUserResponse(String firstName, String lastName, String email, LocalDate birthday, String address,
-            String city, String state, String zipcode, boolean hasNewsletter, List<UserSegment> userSegments,
+            String city, String state, String zipcode, boolean hasNewsletter, List<String> userSegments,
             LocalDateTime lastLoginTime, boolean isDeleted) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -38,6 +42,21 @@ public class GetUserResponse {
         this.userSegments = userSegments;
         this.lastLoginTime = lastLoginTime;
         this.isDeleted = isDeleted;
+    }
+
+    public GetUserResponse(List<String> segments, User user){
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+        this.email = user.getEmail();
+        this.birthday = user.getBirthday();
+        this.address = user.getAddress();
+        this.city = user.getCity();
+        this.state = user.getState();
+        this.zipcode = user.getZipcode();
+        this.hasNewsletter = user.isHasNewsletter();
+        this.userSegments = segments;
+        this.lastLoginTime = user.getLastLoginTime();
+        this.isDeleted = user.isDeleted();
     }
 
     public String getFirstName() {
@@ -112,11 +131,11 @@ public class GetUserResponse {
         this.hasNewsletter = hasNewsletter;
     }
 
-    public List<UserSegment> getUserSegments() {
+    public List<String> getUserSegments() {
         return userSegments;
     }
 
-    public void setUserSegments(List<UserSegment> userSegments) {
+    public void setUserSegments(List<String> userSegments) {
         this.userSegments = userSegments;
     }
 
@@ -135,6 +154,5 @@ public class GetUserResponse {
     public void setDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
-
     
 }

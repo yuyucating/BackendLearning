@@ -1,7 +1,7 @@
 package com.gtalent.commerce.service.enums;
 
 public enum OrderStatus {
-    ORDERED("order"), DELIVERED("delivered"), CANCELLED("cancelled");
+    ORDERED("ordered"), DELIVERED("delivered"), CANCELLED("cancelled");
 
     private String status;
 

@@ -18,11 +18,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gtalent.commerce.service.models.Product;
-import com.gtalent.commerce.service.repositories.ProductRepository;
 import com.gtalent.commerce.service.requests.CreateProductRequest;
 import com.gtalent.commerce.service.responses.CreateProductResponse;
-import com.gtalent.commerce.service.responses.GetProductsResponse;
 import com.gtalent.commerce.service.responses.GetProductDetailsResponse;
+import com.gtalent.commerce.service.responses.GetProductsResponse;
 import com.gtalent.commerce.service.services.ProductService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,7 +30,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("v1/products")
+@RequestMapping("/v1/products")
 @CrossOrigin("*")
 @Tag(name="Product Controller")
 public class ProductController {
@@ -97,15 +96,12 @@ public class ProductController {
     // Update Product
     @PutMapping("/{id}")
     public ResponseEntity<GetProductDetailsResponse> updateProducts(
-        @RequestParam(defaultValue="0") int page,
-        @RequestParam(defaultValue="10") int size,
         @PathVariable int id,
         @RequestBody CreateProductRequest request
     ){
-        PageRequest pageRequest = PageRequest.of(page, size);
         Product product = productService.updateProducts(id, request);
         if(product!=null){
-            GetProductDetailsResponse response = new GetProductDetailsResponse(product, pageRequest);
+            GetProductDetailsResponse response = new GetProductDetailsResponse(product);
             return ResponseEntity.ok(response);
         }return ResponseEntity.noContent().build();
     }
@@ -113,14 +109,11 @@ public class ProductController {
     // show product information (including reviews)
     @GetMapping("/{id}")
     public ResponseEntity<GetProductDetailsResponse> getProduct(
-        @RequestParam(defaultValue="0") int page,
-        @RequestParam(defaultValue="10") int size,
         @PathVariable int id
     ){
-        PageRequest pageRequest = PageRequest.of(page, size);
         Product product = productService.getProduct(id);
         if(product!=null){
-            GetProductDetailsResponse response = new GetProductDetailsResponse(product, pageRequest);
+            GetProductDetailsResponse response = new GetProductDetailsResponse(product);
             return ResponseEntity.ok(response);
         }return ResponseEntity.noContent().build();
     }
